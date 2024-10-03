@@ -3,6 +3,7 @@ package repository
 import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/infrastructure/db"
+	"github.com/google/uuid"
 )
 
 func toDBUser(user *entities.UserValidated) *db.User {
@@ -17,4 +18,18 @@ func toDBUser(user *entities.UserValidated) *db.User {
 			UpdatedAt: user.UpdatedAt,
 		},
 	}
+}
+
+func fromDBUser(dbUser *db.User) *entities.User {
+	user := &entities.User{
+		Id:        uuid.MustParse(dbUser.ID),
+		CreatedAt: dbUser.CreatedAt,
+		UpdatedAt: dbUser.UpdatedAt,
+		FirstName: dbUser.FirstName,
+		LastName:  dbUser.LastName,
+		Email:     dbUser.Email,
+		Password:  dbUser.Password,
+	}
+
+	return user
 }
