@@ -5,8 +5,8 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
 )
 
-func NewUserResultFromValidatedEntity(user *entities.UserValidated) *common.UserResult {
-	return NewUserResultFromEntity(&user.User)
+func NewUserResultFromValidatedEntity(user *entities.User) *common.UserResult {
+	return NewUserResultFromEntity(user)
 }
 
 func NewUserResultFromEntity(user *entities.User) *common.UserResult {
@@ -15,7 +15,7 @@ func NewUserResultFromEntity(user *entities.User) *common.UserResult {
 	}
 
 	return &common.UserResult{
-		Id:        user.Id,
+		ID:        user.Id,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 		FirstName: user.FirstName,

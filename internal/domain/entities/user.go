@@ -2,6 +2,7 @@ package entities
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -28,4 +29,17 @@ func (u *User) validate() error {
 		return errors.New("email is required")
 	}
 	return nil
+}
+
+func NewUser(firstName, lastName, email, password string) *User {
+	user := &User{
+		Id:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     strings.ToLower(email),
+		Password:  password,
+	}
+	return user
 }

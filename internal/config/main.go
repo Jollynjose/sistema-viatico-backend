@@ -19,6 +19,7 @@ type Config struct {
 	DB_NAME     string
 	PORT        string
 	ENV         string
+	SECRET_KEY  string
 }
 
 func checkConfig() error {
@@ -40,6 +41,9 @@ func checkConfig() error {
 	}
 	if os.Getenv("PORT") == "" {
 		message += "PORT is not set\n"
+	}
+	if os.Getenv("SECRET_KEY") == "" {
+		message += "SECRET_KEY is not set\n"
 	}
 
 	if message != "" {
@@ -73,5 +77,6 @@ func NewConfig() *Config {
 		DB_NAME:     os.Getenv("DB_NAME"),
 		PORT:        os.Getenv("PORT"),
 		ENV:         os.Getenv("ENV"),
+		SECRET_KEY:  os.Getenv("SECRET_KEY"),
 	}
 }

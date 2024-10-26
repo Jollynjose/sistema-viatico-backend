@@ -7,7 +7,7 @@ import (
 )
 
 type UserResult struct {
-	Id        uuid.UUID
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	FirstName string

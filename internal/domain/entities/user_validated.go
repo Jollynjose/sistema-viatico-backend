@@ -9,9 +9,15 @@ func (u *UserValidated) IsValidated() bool {
 	return u.isValidated
 }
 
-func NewUserValidated(u User) *UserValidated {
+func NewUserValidated(u *User) *UserValidated {
 	if err := u.validate(); err != nil {
-		return &UserValidated{u, false}
+		return &UserValidated{
+			User:        *u,
+			isValidated: false,
+		}
 	}
-	return &UserValidated{u, true}
+	return &UserValidated{
+		User:        *u,
+		isValidated: true,
+	}
 }
