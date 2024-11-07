@@ -20,7 +20,7 @@ func OpenDB(cfg *config.Config) *gorm.DB {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&User{}, &Region{}, &Province{}, &Municipality{})
 
 	if err != nil {
 		panic("failed to connect database")

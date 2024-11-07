@@ -12,14 +12,15 @@ const DEVELOPMENT string = "dev"
 const PRODUCTION string = "prod"
 
 type Config struct {
-	DB_HOST     string
-	DB_PORT     string
-	DB_USER     string
-	DB_PASSWORD string
-	DB_NAME     string
-	PORT        string
-	ENV         string
-	SECRET_KEY  string
+	DB_HOST            string
+	DB_PORT            string
+	DB_USER            string
+	DB_PASSWORD        string
+	DB_NAME            string
+	PORT               string
+	ENV                string
+	SECRET_KEY         string
+	TERRITORIO_API_URL string
 }
 
 func checkConfig() error {
@@ -46,6 +47,10 @@ func checkConfig() error {
 		message += "SECRET_KEY is not set\n"
 	}
 
+	if os.Getenv("TERRITORIO_API_URL") == "" {
+		message += "TERRITORIO_API_URL is not set\n"
+	}
+
 	if message != "" {
 		return errors.New(message)
 	}
@@ -70,13 +75,14 @@ func NewConfig() *Config {
 	}
 
 	return &Config{
-		DB_HOST:     os.Getenv("DB_HOST"),
-		DB_PORT:     os.Getenv("DB_PORT"),
-		DB_USER:     os.Getenv("DB_USER"),
-		DB_PASSWORD: os.Getenv("DB_PASSWORD"),
-		DB_NAME:     os.Getenv("DB_NAME"),
-		PORT:        os.Getenv("PORT"),
-		ENV:         os.Getenv("ENV"),
-		SECRET_KEY:  os.Getenv("SECRET_KEY"),
+		DB_HOST:            os.Getenv("DB_HOST"),
+		DB_PORT:            os.Getenv("DB_PORT"),
+		DB_USER:            os.Getenv("DB_USER"),
+		DB_PASSWORD:        os.Getenv("DB_PASSWORD"),
+		DB_NAME:            os.Getenv("DB_NAME"),
+		PORT:               os.Getenv("PORT"),
+		ENV:                os.Getenv("ENV"),
+		SECRET_KEY:         os.Getenv("SECRET_KEY"),
+		TERRITORIO_API_URL: os.Getenv("TERRITORIO_API_URL"),
 	}
 }
