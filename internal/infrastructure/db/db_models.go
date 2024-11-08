@@ -149,7 +149,7 @@ type TravelExpense struct {
 	TotalPrice        float64             `json:"total_price" gorm:"not null"`
 	DepartureDate     time.Time           `json:"departure_date" gorm:"not null"`
 	ArrivalDate       time.Time           `json:"arrival_date" gorm:"not null"`
-	SolcitudeDate     time.Time           `json:"solcitude_date" gorm:"not null"`
+	SolicitudeDate    time.Time           `json:"solicitude_date" gorm:"not null"`
 	RouteId           string              `json:"route_id" gorm:"not null"`
 	Route             Route               `json:"route" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	UserTravelHistory []UserTravelHistory `json:"user_travel_history" gorm:"foreignKey:TravelExpenseId;constraint:OnDelete:CASCADE;References:ID"`
