@@ -39,7 +39,7 @@ func main() {
 	municipalityService := services.NewMunicipalityService(municipalityRepository, cfg)
 
 	// Mount the userRouter
-	mainRouter.Handle("/user/", http.StripPrefix("/user", middlewares.CheckAuthorization(userRouter)))
+	mainRouter.Handle("/user/", http.StripPrefix("/user", userRouter))
 	mainRouter.Handle("/auth/", http.StripPrefix("/auth", authRouter))
 	mainRouter.Handle("/region/", http.StripPrefix("/region", regionRouter))
 	mainRouter.Handle("/province/", http.StripPrefix("/province", provinceRouter))

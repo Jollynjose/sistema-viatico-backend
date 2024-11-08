@@ -8,4 +8,6 @@ import (
 type UserService interface {
 	Signup(userCommand *command.CreateUserCommand) (*command.CreateUserCommandResult, error)
 	SignIn(userCommand *command.FindUserCommand) (*query.UserQueryResult, error)
+	FindUserById(userCommand *command.FindUserByIdCommand) (*query.UserQueryResult, error)
+	FindAll() (*query.UsersQueryResult, error)
 }

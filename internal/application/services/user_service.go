@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/command"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/application/common"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/mapper"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/query"
@@ -77,4 +78,44 @@ func (u *UserService) SignIn(userCommand *command.FindUserCommand) (*query.UserQ
 	}
 
 	return &res, nil
+}
+
+func (u *UserService) FindUserById(userCommand *command.FindUserByIdCommand) (*query.UserQueryResult, error) {
+	user, err := u.userRepository.FindOneById(userCommand.ID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, errors.New("user not found")
+	}
+
+	mappedUser := mapper.NewUserResultFromValidatedEntity(user)
+
+	res := query.UserQueryResult{
+		Result: mappedUser,
+	}
+
+	return &res, nil
+}
+
+func (u *UserService) FindAll() (*query.UsersQueryResult, error) {
+	users, err := u.userRepository.FindAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var mappedUsers []*common.UserResult
+
+	for _, user := range users {
+		mappedUser := mapper.NewUserResultFromValidatedEntity(user)
+
+		mappedUsers = append(mappedUsers, mappedUser)
+	}
+
+	return &query.UsersQueryResult{
+		Results: mappedUsers,
+	}, nil
 }

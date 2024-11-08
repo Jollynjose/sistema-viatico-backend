@@ -7,4 +7,5 @@ type UserRepository interface {
 	IsExist(email string) bool
 	Create(user *entities.UserValidated) (*entities.User, error)
 	FindOneByEmail(email string) (*entities.User, error)
+	FindOneById(id string) (*entities.User, error)
 }

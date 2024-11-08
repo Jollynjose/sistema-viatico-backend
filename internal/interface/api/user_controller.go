@@ -3,7 +3,12 @@ package api
 import (
 	"net/http"
 
+	"github.com/Jollynjose/sistema-viatico-backend/internal/application/command"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/helpers"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/mapper"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/response"
+	"github.com/google/uuid"
 )
 
 type UserController struct {
@@ -16,10 +21,68 @@ func NewUserController(router *http.ServeMux, service interfaces.UserService) *U
 	}
 
 	router.HandleFunc("POST /hello", controller.hello)
+	router.HandleFunc("GET /", controller.FindAll)
+	router.HandleFunc("GET /{id}", controller.FindUserById)
 
 	return controller
 }
 
 func (uc *UserController) hello(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello, World!"))
+}
+
+func (uc *UserController) FindAll(w http.ResponseWriter, r *http.Request) {
+
+	usersQuery, err := uc.service.FindAll()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var usersResponse []*response.FindUserResponse
+
+	for _, userQuery := range usersQuery.Results {
+		usersResponse = append(usersResponse, mapper.ToFindUserResponse(userQuery))
+	}
+
+	response := response.FindUsersResponse{
+		Users: usersResponse,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := helpers.ParseJSON(w, response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (uc *UserController) FindUserById(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	err := uuid.Validate(id)
+
+	if err != nil {
+		http.Error(w, "Invalid id", http.StatusBadRequest)
+		return
+	}
+
+	userQuery, err := uc.service.FindUserById(&command.FindUserByIdCommand{
+		ID: id,
+	})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := mapper.ToFindUserResponse(userQuery.Result)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := helpers.ParseJSON(w, response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

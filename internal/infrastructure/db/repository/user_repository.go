@@ -21,7 +21,7 @@ func NewGormUserRepository(db *gorm.DB) repositories.UserRepository {
 func (r *GormUserRepository) FindAll() ([]*entities.User, error) {
 	var dbUsers []db.User
 
-	err := r.db.Preload("User").Find(&dbUsers).Error
+	err := r.db.Find(&dbUsers).Error
 
 	if err != nil {
 		return nil, err
@@ -41,10 +41,7 @@ func (r *GormUserRepository) IsExist(email string) bool {
 
 	r.db.First(&user, "email = ?", strings.ToLower(email))
 
-	if user.ID == "" {
-		return false
-	}
-	return true
+	return user.ID != ""
 }
 
 func (r *GormUserRepository) Create(user *entities.UserValidated) (*entities.User, error) {
@@ -69,7 +66,7 @@ func (r *GormUserRepository) Create(user *entities.UserValidated) (*entities.Use
 func (r *GormUserRepository) FindById(id string) (*entities.User, error) {
 	var dbUser db.User
 
-	err := r.db.Preload("User").First(&dbUser, "id = ?", id).Error
+	err := r.db.First(&dbUser, "id = ?", id).Error
 
 	if err != nil {
 		return nil, err
@@ -82,6 +79,18 @@ func (r *GormUserRepository) FindOneByEmail(email string) (*entities.User, error
 	var dbUser db.User
 
 	err := r.db.First(&dbUser, "email = ?", strings.ToLower(email)).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return fromDBUser(&dbUser), nil
+}
+
+func (r *GormUserRepository) FindOneById(id string) (*entities.User, error) {
+	var dbUser db.User
+
+	err := r.db.First(&dbUser, "id = ?", id).Error
 
 	if err != nil {
 		return nil, err
