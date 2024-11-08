@@ -36,14 +36,15 @@ func (b *Base) BeforeCreate(tx *gorm.DB) (err error) {
 
 type User struct {
 	Base
-	FirstName               string      `json:"first_name" gorm:"size:255;not null"`
-	LastName                string      `json:"last_name" gorm:"size:255;not null"`
-	Email                   string      `json:"email" gorm:"size:255;not null;unique"`
-	Password                string      `json:"password" gorm:"not null"`
-	Role                    Roles       `json:"role" gorm:"type:enum('admin', 'manager', 'general');not null"`
-	JobPositionId           string      `json:"job_position_id" gorm:"not null"`
-	JobPosition             JobPosition `json:"job_position" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	JobPostionSpecification *string     `json:"job_position_specification" gorm:"size:255"`
+	FirstName               string              `json:"first_name" gorm:"size:255;not null"`
+	LastName                string              `json:"last_name" gorm:"size:255;not null"`
+	Email                   string              `json:"email" gorm:"size:255;not null;unique"`
+	Password                string              `json:"password" gorm:"not null"`
+	Role                    Roles               `json:"role" gorm:"type:enum('admin', 'manager', 'general');not null"`
+	JobPositionId           string              `json:"job_position_id" gorm:"not null"`
+	JobPosition             JobPosition         `json:"job_position" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	JobPostionSpecification *string             `json:"job_position_specification" gorm:"size:255"`
+	TravelHistories         []UserTravelHistory `json:"travel_histories" gorm:"foreignKey:UserId;constraint:OnDelete:CASCADE;References:ID"`
 }
 
 type JobPosition struct {
@@ -55,10 +56,11 @@ type JobPosition struct {
 
 type JobPositionHistory struct {
 	Base
-	Lunch         float64 `json:"lunch" gorm:"not null"`
-	BreakFast     float64 `json:"breakfast" gorm:"not null"`
-	Dinner        float64 `json:"dinner" gorm:"not null"`
-	JobPositionId string  `json:"job_position_id" gorm:"not null"`
+	Lunch           float64             `json:"lunch" gorm:"not null"`
+	BreakFast       float64             `json:"breakfast" gorm:"not null"`
+	Dinner          float64             `json:"dinner" gorm:"not null"`
+	JobPositionId   string              `json:"job_position_id" gorm:"not null"`
+	TravelHistories []UserTravelHistory `json:"travel_histories" gorm:"foreignKey:JobPositionHistoryId;constraint:OnDelete:CASCADE;References:ID"`
 }
 
 type Region struct {
@@ -128,14 +130,27 @@ type Toll struct {
 	Order int     `json:"order" gorm:"not null"`
 }
 
+type UserTravelHistory struct {
+	Base
+	UserId               string             `json:"user_id" gorm:"not null"`
+	User                 User               `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	TravelExpense        TravelExpense      `json:"travel_expense" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	TravelExpenseId      string             `json:"travel_expense_id" gorm:"not null"`
+	JobPositionHistoryId string             `json:"job_position_history_id" gorm:"not null"`
+	JobPositionHistory   JobPositionHistory `json:"job_position_history" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	TotalPrice           float64            `json:"total_price" gorm:"not null"`
+	PlusPercentage       float64            `json:"plus_percentage" gorm:"not null"`
+}
+
 type TravelExpense struct {
 	Base
-	FuelHistoryId string    `json:"fuel_history_id" gorm:"not null"`
-	FuelHistory   Fuel      `json:"fuel_history" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	TotalPrice    float64   `json:"total_price" gorm:"not null"`
-	DepartureDate time.Time `json:"departure_date" gorm:"not null"`
-	ArrivalDate   time.Time `json:"arrival_date" gorm:"not null"`
-	SolcitudeDate time.Time `json:"solcitude_date" gorm:"not null"`
-	RouteId       string    `json:"route_id" gorm:"not null"`
-	Route         Route     `json:"route" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	FuelHistoryId     string              `json:"fuel_history_id" gorm:"not null"`
+	FuelHistory       Fuel                `json:"fuel_history" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	TotalPrice        float64             `json:"total_price" gorm:"not null"`
+	DepartureDate     time.Time           `json:"departure_date" gorm:"not null"`
+	ArrivalDate       time.Time           `json:"arrival_date" gorm:"not null"`
+	SolcitudeDate     time.Time           `json:"solcitude_date" gorm:"not null"`
+	RouteId           string              `json:"route_id" gorm:"not null"`
+	Route             Route               `json:"route" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	UserTravelHistory []UserTravelHistory `json:"user_travel_history" gorm:"foreignKey:TravelExpenseId;constraint:OnDelete:CASCADE;References:ID"`
 }
