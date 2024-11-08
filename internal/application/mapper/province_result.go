@@ -20,6 +20,7 @@ func NewProvinceResultFromEntity(p *entities.Province) *common.ProvinceResult {
 		CreatedAt:  p.CreatedAt,
 		UpdatedAt:  p.UpdatedAt,
 		Identifier: p.Identifier,
-		RegionID:   p.RegionID,
+		RegionCode: p.RegionCode,
+		Code:       p.Code,
 	}
 }

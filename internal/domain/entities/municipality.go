@@ -8,13 +8,14 @@ import (
 )
 
 type Municipality struct {
-	Id         uuid.UUID
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
-	Name       string
-	Identifier string
-	RegionID   string
-	ProvinceID string
+	Id           uuid.UUID
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	Code         string
+	Name         string
+	Identifier   string
+	RegionCode   string
+	ProvinceCode string
 }
 
 func (e *Municipality) validate() error {
@@ -26,26 +27,31 @@ func (e *Municipality) validate() error {
 		return errors.New("identifier is required")
 	}
 
-	if e.RegionID == "" {
+	if e.RegionCode == "" {
 		return errors.New("region id is required")
 	}
 
-	if e.ProvinceID == "" {
+	if e.ProvinceCode == "" {
 		return errors.New("province id is required")
+	}
+
+	if e.Code == "" {
+		return errors.New("code is required")
 	}
 
 	return nil
 }
 
-func NewMunicipality(Name, Identifier, RegionID, ProvinceID string) *Municipality {
+func NewMunicipality(Name, Identifier, RegionCode, ProvinceCode, Code string) *Municipality {
 	municipality := &Municipality{
-		Id:         uuid.New(),
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
-		Name:       Name,
-		Identifier: Identifier,
-		RegionID:   RegionID,
-		ProvinceID: ProvinceID,
+		Id:           uuid.New(),
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+		Name:         Name,
+		Identifier:   Identifier,
+		RegionCode:   RegionCode,
+		ProvinceCode: ProvinceCode,
+		Code:         Code,
 	}
 	return municipality
 }

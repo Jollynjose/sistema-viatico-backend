@@ -10,6 +10,7 @@ func toDBRegion(r *entities.RegionValidated) *db.Region {
 	return &db.Region{
 		Name:       r.Name,
 		Identifier: r.Identifier,
+		Code:       r.Code,
 		Base: db.Base{
 			ID:        r.Id.String(),
 			CreatedAt: r.CreatedAt,
@@ -25,6 +26,7 @@ func fromDBRegion(r *db.Region) *entities.Region {
 		UpdatedAt:  r.UpdatedAt,
 		Name:       r.Name,
 		Identifier: r.Identifier,
+		Code:       r.Code,
 	}
 
 	return region

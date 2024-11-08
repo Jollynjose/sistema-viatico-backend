@@ -31,22 +31,25 @@ type Region struct {
 	Base
 	Name           string         `json:"name" gorm:"not null"`
 	Identifier     string         `json:"identifier" gorm:"uniqueIndex;not null"`
-	Provinces      []Province     `json:"provinces" gorm:"foreignKey:RegionID;constraint:OnDelete:CASCADE;REFERENCES:Identifier"`
-	Municipalities []Municipality `json:"municipalities" gorm:"foreignKey:RegionID;constraint:OnDelete:CASCADE;REFERENCES:Identifier"`
+	Provinces      []Province     `json:"provinces" gorm:"foreignKey:RegionCode;constraint:OnDelete:CASCADE;REFERENCES:Code"`
+	Municipalities []Municipality `json:"municipalities" gorm:"foreignKey:RegionCode;constraint:OnDelete:CASCADE;REFERENCES:Code"`
+	Code           string         `json:"code" gorm:"uniqueIndex;not null"`
 }
 
 type Province struct {
 	Base
 	Name           string         `json:"name" gorm:"not null"`
 	Identifier     string         `json:"identifier" gorm:"uniqueIndex;not null"`
-	RegionID       string         `json:"region_id" gorm:"not null"`
-	Municipalities []Municipality `json:"municipalities" gorm:"foreignKey:ProvinceID;constraint:OnDelete:CASCADE;REFERENCES:Identifier"`
+	RegionCode     string         `json:"region_code" gorm:"not null"`
+	Municipalities []Municipality `json:"municipalities" gorm:"foreignKey:ProvinceCode;constraint:OnDelete:CASCADE;REFERENCES:Code"`
+	Code           string         `json:"code" gorm:"uniqueIndex;not null"`
 }
 
 type Municipality struct {
 	Base
-	Name       string `json:"name" gorm:"not null"`
-	Identifier string `json:"identifier" gorm:"uniqueIndex;not null"`
-	ProvinceID string `json:"province_id" gorm:"not null;uniqueIndex:idx_province_municipality"`
-	RegionID   string `json:"region_id" gorm:"not null;uniqueIndex:idx_region_municipality"`
+	Name         string `json:"name" gorm:"not null"`
+	Identifier   string `json:"identifier" gorm:"uniqueIndex;not null"`
+	ProvinceCode string `json:"province_code" gorm:"not null;index"`
+	RegionCode   string `json:"region_code" gorm:"not null;index"`
+	Code         string `json:"code" gorm:"not null"`
 }

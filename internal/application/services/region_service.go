@@ -53,7 +53,7 @@ func (s *RegionService) IngestRegion() (*command.IngestRegionCommandResult, erro
 	var results []*common.RegionResult
 
 	for _, region := range regionsResponse.Data {
-		regionEntity := entities.NewRegion(region.Name, region.Identifier)
+		regionEntity := entities.NewRegion(region.Name, region.Identifier, region.Code)
 
 		validatedRegion := entities.NewRegionValidated(regionEntity)
 

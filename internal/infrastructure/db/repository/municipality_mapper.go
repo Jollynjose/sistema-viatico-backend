@@ -8,10 +8,11 @@ import (
 
 func toDBMunicipality(m *entities.MunicipalityValidated) *db.Municipality {
 	return &db.Municipality{
-		Name:       m.Name,
-		Identifier: m.Identifier,
-		RegionID:   m.RegionID,
-		ProvinceID: m.ProvinceID,
+		Name:         m.Name,
+		Identifier:   m.Identifier,
+		RegionCode:   m.RegionCode,
+		ProvinceCode: m.ProvinceCode,
+		Code:         m.Code,
 		Base: db.Base{
 			ID:        m.Id.String(),
 			CreatedAt: m.CreatedAt,
@@ -22,13 +23,14 @@ func toDBMunicipality(m *entities.MunicipalityValidated) *db.Municipality {
 
 func fromDBMunicipality(m *db.Municipality) *entities.Municipality {
 	municipality := &entities.Municipality{
-		Id:         uuid.MustParse(m.ID),
-		CreatedAt:  m.CreatedAt,
-		UpdatedAt:  m.UpdatedAt,
-		Name:       m.Name,
-		Identifier: m.Identifier,
-		RegionID:   m.RegionID,
-		ProvinceID: m.ProvinceID,
+		Id:           uuid.MustParse(m.ID),
+		CreatedAt:    m.CreatedAt,
+		UpdatedAt:    m.UpdatedAt,
+		Name:         m.Name,
+		Identifier:   m.Identifier,
+		RegionCode:   m.RegionCode,
+		ProvinceCode: m.ProvinceCode,
+		Code:         m.Code,
 	}
 
 	return municipality

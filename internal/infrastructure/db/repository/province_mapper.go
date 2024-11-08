@@ -10,7 +10,8 @@ func toDBProvince(p *entities.ProvinceValidated) *db.Province {
 	return &db.Province{
 		Name:       p.Name,
 		Identifier: p.Identifier,
-		RegionID:   p.RegionID,
+		RegionCode: p.RegionCode,
+		Code:       p.Code,
 		Base: db.Base{
 			ID:        p.Id.String(),
 			CreatedAt: p.CreatedAt,
@@ -26,7 +27,8 @@ func fromDBProvince(p *db.Province) *entities.Province {
 		UpdatedAt:  p.UpdatedAt,
 		Name:       p.Name,
 		Identifier: p.Identifier,
-		RegionID:   p.RegionID,
+		RegionCode: p.RegionCode,
+		Code:       p.Code,
 	}
 
 	return Province

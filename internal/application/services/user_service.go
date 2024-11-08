@@ -6,6 +6,7 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/command"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/mapper"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/application/query"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/repositories"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/helpers"
@@ -54,7 +55,7 @@ func (u *UserService) Signup(userCommand *command.CreateUserCommand) (*command.C
 	return &res, nil
 }
 
-func (u *UserService) SignIn(userCommand *command.FindUserCommand) (*command.CreateUserCommandResult, error) {
+func (u *UserService) SignIn(userCommand *command.FindUserCommand) (*query.UserQueryResult, error) {
 	user, err := u.userRepository.FindOneByEmail(userCommand.Email)
 
 	if err != nil {
@@ -71,7 +72,7 @@ func (u *UserService) SignIn(userCommand *command.FindUserCommand) (*command.Cre
 
 	mappedUser := mapper.NewUserResultFromValidatedEntity(user)
 
-	res := command.CreateUserCommandResult{
+	res := query.UserQueryResult{
 		Result: mappedUser,
 	}
 

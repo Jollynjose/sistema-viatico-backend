@@ -41,7 +41,7 @@ func (s *ProvinceService) IngestProvince() (*command.IngestProvinceCommandResult
 			Name       string `json:"name"`
 			Identifier string `json:"identifier"`
 			Code       string `json:"code"`
-			RegionId   string `json:"regionCode"`
+			RegionCode string `json:"regionCode"`
 		} `json:"data"`
 	}
 
@@ -54,7 +54,7 @@ func (s *ProvinceService) IngestProvince() (*command.IngestProvinceCommandResult
 	var results []*common.ProvinceResult
 
 	for _, province := range provincesResponse.Data {
-		provinceEntity := entities.NewProvince(province.Name, province.Identifier, province.RegionId)
+		provinceEntity := entities.NewProvince(province.Name, province.Identifier, province.RegionCode, province.Code)
 
 		validatedProvince := entities.NewProvinceValidated(provinceEntity)
 

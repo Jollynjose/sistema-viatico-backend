@@ -38,11 +38,11 @@ func (s *MunicipalityService) IngestMunicipality() (*command.IngestMunicipalityC
 	var municipalitysResponse struct {
 		Valid bool `json:"valid"`
 		Data  []struct {
-			Name       string `json:"name"`
-			Identifier string `json:"identifier"`
-			Code       string `json:"code"`
-			RegionId   string `json:"regionCode"`
-			ProvinceId string `json:"provinceCode"`
+			Name         string `json:"name"`
+			Identifier   string `json:"identifier"`
+			Code         string `json:"code"`
+			RegionCode   string `json:"regionCode"`
+			ProvinceCode string `json:"provinceCode"`
 		} `json:"data"`
 	}
 
@@ -55,7 +55,7 @@ func (s *MunicipalityService) IngestMunicipality() (*command.IngestMunicipalityC
 	var results []*common.MunicipalityResult
 
 	for _, municipality := range municipalitysResponse.Data {
-		municipalityEntity := entities.NewMunicipality(municipality.Name, municipality.Identifier, municipality.RegionId, municipality.ProvinceId)
+		municipalityEntity := entities.NewMunicipality(municipality.Name, municipality.Identifier, municipality.RegionCode, municipality.ProvinceCode, municipality.Code)
 
 		validatedMunicipality := entities.NewMunicipalityValidated(municipalityEntity)
 

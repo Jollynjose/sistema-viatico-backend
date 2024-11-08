@@ -20,5 +20,6 @@ func NewRegionResultFromEntity(r *entities.Region) *common.RegionResult {
 		Identifier: r.Identifier,
 		CreatedAt:  r.CreatedAt,
 		UpdatedAt:  r.UpdatedAt,
+		Code:       r.Code,
 	}
 }

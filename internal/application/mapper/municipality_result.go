@@ -15,12 +15,13 @@ func NewMunicipalityResultFromEntity(e *entities.Municipality) *common.Municipal
 	}
 
 	return &common.MunicipalityResult{
-		ID:         e.Id,
-		Name:       e.Name,
-		CreatedAt:  e.CreatedAt,
-		UpdatedAt:  e.UpdatedAt,
-		Identifier: e.Identifier,
-		RegionID:   e.RegionID,
-		ProvinceID: e.ProvinceID,
+		ID:           e.Id,
+		Name:         e.Name,
+		CreatedAt:    e.CreatedAt,
+		UpdatedAt:    e.UpdatedAt,
+		Identifier:   e.Identifier,
+		RegionCode:   e.RegionCode,
+		ProvinceCode: e.ProvinceCode,
+		Code:         e.Code,
 	}
 }
