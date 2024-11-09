@@ -10,4 +10,5 @@ type UserService interface {
 	SignIn(userCommand *command.FindUserCommand) (*query.UserQueryResult, error)
 	FindUserById(userCommand *command.FindUserByIdCommand) (*query.UserQueryResult, error)
 	FindAll() (*query.UsersQueryResult, error)
+	UpdateById(id string, userCommand *command.UpdateUserCommand) (*command.UpdateUserCommandResult, error)
 }

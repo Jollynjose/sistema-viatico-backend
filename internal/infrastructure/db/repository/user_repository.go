@@ -98,3 +98,43 @@ func (r *GormUserRepository) FindOneById(id string) (*entities.User, error) {
 
 	return fromDBUser(&dbUser), nil
 }
+
+func (r *GormUserRepository) UpdateById(id string, user *entities.User) (*entities.User, error) {
+	var dbUser db.User
+
+	err := r.db.First(&dbUser, "id = ?", id).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !helpers.IsEmpty(user.FirstName) {
+		dbUser.FirstName = user.FirstName
+	}
+
+	if !helpers.IsEmpty(user.LastName) {
+		dbUser.LastName = user.LastName
+	}
+
+	if !helpers.IsEmpty(user.Email) {
+		dbUser.Email = user.Email
+	}
+
+	if !helpers.IsEmpty(user.Role.String()) {
+		dbUser.Role = db.Roles(user.Role.String())
+	}
+
+	if !helpers.IsEmpty(user.JobPositionID) {
+		dbUser.JobPositionID = user.JobPositionID
+	}
+
+	if user.JobPostionSpecification != nil && !helpers.IsEmpty(*user.JobPostionSpecification) {
+		dbUser.JobPostionSpecification = user.JobPostionSpecification
+	}
+
+	if err := r.db.Save(&dbUser).Error; err != nil {
+		return nil, err
+	}
+
+	return fromDBUser(&dbUser), nil
+}

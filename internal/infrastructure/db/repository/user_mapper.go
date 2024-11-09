@@ -8,10 +8,13 @@ import (
 
 func toDBUser(user *entities.UserValidated) *db.User {
 	return &db.User{
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
-		Password:  user.Password,
+		FirstName:               user.FirstName,
+		LastName:                user.LastName,
+		Email:                   user.Email,
+		Password:                user.Password,
+		Role:                    user.Role,
+		JobPositionID:           user.JobPositionID,
+		JobPostionSpecification: user.JobPostionSpecification,
 		Base: db.Base{
 			ID:        user.Id.String(),
 			CreatedAt: user.CreatedAt,
@@ -22,13 +25,16 @@ func toDBUser(user *entities.UserValidated) *db.User {
 
 func fromDBUser(dbUser *db.User) *entities.User {
 	user := &entities.User{
-		Id:        uuid.MustParse(dbUser.ID),
-		CreatedAt: dbUser.CreatedAt,
-		UpdatedAt: dbUser.UpdatedAt,
-		FirstName: dbUser.FirstName,
-		LastName:  dbUser.LastName,
-		Email:     dbUser.Email,
-		Password:  dbUser.Password,
+		Id:                      uuid.MustParse(dbUser.ID),
+		CreatedAt:               dbUser.CreatedAt,
+		UpdatedAt:               dbUser.UpdatedAt,
+		FirstName:               dbUser.FirstName,
+		LastName:                dbUser.LastName,
+		Email:                   dbUser.Email,
+		Password:                dbUser.Password,
+		Role:                    dbUser.Role,
+		JobPositionID:           dbUser.JobPositionID,
+		JobPostionSpecification: dbUser.JobPostionSpecification,
 	}
 
 	return user

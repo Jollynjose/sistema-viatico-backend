@@ -1,6 +1,8 @@
 package repositories
 
-import "github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
+import (
+	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
+)
 
 type UserRepository interface {
 	FindAll() ([]*entities.User, error)
@@ -8,4 +10,5 @@ type UserRepository interface {
 	Create(user *entities.UserValidated) (*entities.User, error)
 	FindOneByEmail(email string) (*entities.User, error)
 	FindOneById(id string) (*entities.User, error)
+	UpdateById(id string, user *entities.User) (*entities.User, error)
 }

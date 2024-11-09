@@ -7,6 +7,7 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/helpers"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/mapper"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/request"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/response"
 	"github.com/google/uuid"
 )
@@ -78,6 +79,44 @@ func (uc *UserController) FindUserById(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := mapper.ToFindUserResponse(userQuery.Result)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if err := helpers.ParseJSON(w, response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (uc *UserController) UpdateUserById(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+
+	err := uuid.Validate(id)
+
+	if err != nil {
+		http.Error(w, "Invalid id", http.StatusBadRequest)
+		return
+	}
+
+	var updateUserRequest request.UpdateUserByIdRequest
+
+	err = helpers.DecodeJSONBody(w, r, &updateUserRequest)
+
+	if err != nil {
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	userCommand := updateUserRequest.ToUpdateUserCommand()
+
+	user, err := uc.service.UpdateById(id, userCommand)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := mapper.ToFindUserResponse(user.Result)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

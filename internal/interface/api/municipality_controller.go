@@ -16,23 +16,23 @@ func NewMunicipalityController(router *http.ServeMux, service interfaces.Municip
 		service: service,
 	}
 
-	router.HandleFunc("POST /ingest", ctrl.IngestMunicipality)
+	router.HandleFunc("GET /", ctrl.FindAll)
+
 	return ctrl
 }
 
-func (c *MunicipalityController) IngestMunicipality(w http.ResponseWriter, r *http.Request) {
-	result, err := c.service.IngestMunicipality()
+func (c *MunicipalityController) FindAll(w http.ResponseWriter, r *http.Request) {
+	municipalitiesQuery, err := c.service.FindAll()
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	w.Header().Set("Content-Type", "application/json")
-
-	if err := helpers.ParseJSON(w, result); err != nil {
+	if err := helpers.ParseJSON(w, municipalitiesQuery); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

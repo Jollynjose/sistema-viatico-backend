@@ -25,6 +25,7 @@ func main() {
 	regionRouter := http.NewServeMux()
 	provinceRouter := http.NewServeMux()
 	municipalityRouter := http.NewServeMux()
+	ingestionRouter := http.NewServeMux()
 
 	// Repositories
 	userRepository := repository.NewGormUserRepository(gormDb)
@@ -37,6 +38,7 @@ func main() {
 	regionService := services.NewRegionService(regionRepository, cfg)
 	provinceService := services.NewProvinceService(provinceRepository, cfg)
 	municipalityService := services.NewMunicipalityService(municipalityRepository, cfg)
+	ingestionService := services.NewIngestionService(municipalityService, provinceService, regionService, cfg)
 
 	// Mount the userRouter
 	mainRouter.Handle("/user/", http.StripPrefix("/user", userRouter))
@@ -44,6 +46,7 @@ func main() {
 	mainRouter.Handle("/region/", http.StripPrefix("/region", regionRouter))
 	mainRouter.Handle("/province/", http.StripPrefix("/province", provinceRouter))
 	mainRouter.Handle("/municipality/", http.StripPrefix("/municipality", municipalityRouter))
+	mainRouter.Handle("/ingest/", http.StripPrefix("/ingest", ingestionRouter))
 
 	// Controllers
 	api.NewUserController(userRouter, userService)
@@ -51,6 +54,7 @@ func main() {
 	api.NewRegionController(regionRouter, regionService)
 	api.NewProvinceController(provinceRouter, provinceService)
 	api.NewMunicipalityController(municipalityRouter, municipalityService)
+	api.NewIngestionController(ingestionRouter, ingestionService)
 
 	// Create the server
 	server := &http.Server{

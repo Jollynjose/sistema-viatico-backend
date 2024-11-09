@@ -9,6 +9,7 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/common"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/mapper"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/application/query"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/config"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/repositories"
@@ -26,8 +27,8 @@ func NewMunicipalityService(municipalityRepository repositories.MunicipalityRepo
 	}
 }
 
-func (s *MunicipalityService) IngestMunicipality() (*command.IngestMunicipalityCommandResult, error) {
-	requestUrl := fmt.Sprintf("%s/%s", s.cfg.TERRITORIO_API_URL, "/municipalities")
+func (s *MunicipalityService) IngestMunicipality(region *common.RegionResult) (*command.IngestMunicipalityCommandResult, error) {
+	requestUrl := fmt.Sprintf("%s/%s?regionCode=%s", s.cfg.TERRITORIO_API_URL, "/municipalities", region.Code)
 
 	res, err := http.Get(requestUrl)
 
@@ -72,5 +73,23 @@ func (s *MunicipalityService) IngestMunicipality() (*command.IngestMunicipalityC
 
 	return &command.IngestMunicipalityCommandResult{
 		Result: results,
+	}, nil
+}
+
+func (s *MunicipalityService) FindAll() (*query.MunicipalitiesQueryResult, error) {
+	results, err := s.MunicipalityRepository.FindAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var municipalitiesResults []*common.MunicipalityResult
+
+	for _, result := range results {
+		municipalitiesResults = append(municipalitiesResults, mapper.NewMunicipalityResultFromEntity(result))
+	}
+
+	return &query.MunicipalitiesQueryResult{
+		Results: municipalitiesResults,
 	}, nil
 }

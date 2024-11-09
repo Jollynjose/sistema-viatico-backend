@@ -3,6 +3,7 @@ package entities
 type UserValidated struct {
 	User
 	isValidated bool
+	Err         error
 }
 
 func (u *UserValidated) IsValidated() bool {
@@ -14,6 +15,7 @@ func NewUserValidated(u *User) *UserValidated {
 		return &UserValidated{
 			User:        *u,
 			isValidated: false,
+			Err:         err,
 		}
 	}
 	return &UserValidated{
