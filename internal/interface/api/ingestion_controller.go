@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/helpers"
 )
 
 type IngestionController struct {
@@ -27,8 +28,5 @@ func (c *IngestionController) IngestMapData(w http.ResponseWriter, r *http.Reque
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(`{"message": "Data Ingested"}`))
+	helpers.ResponseHandler(w, http.StatusCreated, []byte(`{"message": "Data Ingested"}`))
 }

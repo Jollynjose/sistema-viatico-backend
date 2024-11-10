@@ -51,12 +51,7 @@ func (uc *UserController) FindAll(w http.ResponseWriter, r *http.Request) {
 		Users: usersResponse,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	if err := helpers.ParseJSON(w, response); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	helpers.ResponseHandler(w, http.StatusOK, response)
 }
 
 func (uc *UserController) FindUserById(w http.ResponseWriter, r *http.Request) {
@@ -80,12 +75,7 @@ func (uc *UserController) FindUserById(w http.ResponseWriter, r *http.Request) {
 
 	response := mapper.ToFindUserResponse(userQuery.Result)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	if err := helpers.ParseJSON(w, response); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	helpers.ResponseHandler(w, http.StatusOK, response)
 }
 
 func (uc *UserController) UpdateUserById(w http.ResponseWriter, r *http.Request) {
@@ -118,10 +108,5 @@ func (uc *UserController) UpdateUserById(w http.ResponseWriter, r *http.Request)
 
 	response := mapper.ToFindUserResponse(user.Result)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	if err := helpers.ParseJSON(w, response); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	helpers.ResponseHandler(w, http.StatusCreated, response)
 }

@@ -31,3 +31,19 @@ func IsValidRole(role string) bool {
 	fmt.Println(role)
 	return IsAdmin(role) || IsManager(role) || IsGeneral(role)
 }
+
+func IsArrayEmpty[T any](arr []T) bool {
+	return len(arr) == 0
+}
+
+func IsDiesel(fuelType string) bool {
+	return db.FuelPriceType(fuelType) == db.Diesel_FuelPriceType
+}
+
+func IsGasoline(fuelType string) bool {
+	return db.FuelPriceType(fuelType) == db.Gasoline_FuelPriceType
+}
+
+func IsValidFuelType(fuelType string) bool {
+	return IsDiesel(fuelType) || IsGasoline(fuelType)
+}

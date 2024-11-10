@@ -154,7 +154,7 @@ type UserTravelHistory struct {
 type TravelExpense struct {
 	Base
 	FuelHistoryID     string              `json:"fuel_history_id" gorm:"not null"`
-	FuelHistory       Fuel                `json:"fuel_history" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	FuelHistory       FuelHistory         `json:"fuel_history" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	TotalPrice        float64             `json:"total_price" gorm:"not null"`
 	DepartureDate     time.Time           `json:"departure_date" gorm:"not null"`
 	ArrivalDate       time.Time           `json:"arrival_date" gorm:"not null"`

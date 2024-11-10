@@ -1,0 +1,18 @@
+package response
+
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type FindJobPositionHistoryResponse struct {
+	ID            uuid.UUID `json:"id"`
+	Lunch         float64   `json:"lunch"`
+	BreakFast     float64   `json:"breakfast"`
+	Dinner        float64   `json:"dinner"`
+	JobPositionID uuid.UUID `json:"job_position_id"`
+	Accommodation float64   `json:"accommodation"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}

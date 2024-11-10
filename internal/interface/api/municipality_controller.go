@@ -29,10 +29,5 @@ func (c *MunicipalityController) FindAll(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	if err := helpers.ParseJSON(w, municipalitiesQuery); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	helpers.ResponseHandler(w, http.StatusOK, municipalitiesQuery)
 }

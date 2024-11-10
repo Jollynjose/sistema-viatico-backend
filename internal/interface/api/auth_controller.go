@@ -57,12 +57,7 @@ func (ac *AuthController) SignUp(w http.ResponseWriter, r *http.Request) {
 
 	response := mapper.ToAuthUserResponse(user.Result, token)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-
-	if err := helpers.ParseJSON(w, response); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	helpers.ResponseHandler(w, http.StatusCreated, response)
 }
 
 func (ac *AuthController) SignIn(w http.ResponseWriter, r *http.Request) {
@@ -95,10 +90,5 @@ func (ac *AuthController) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	response := mapper.ToAuthUserResponse(user.Result, token)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-
-	if err := helpers.ParseJSON(w, response); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	helpers.ResponseHandler(w, http.StatusOK, response)
 }
