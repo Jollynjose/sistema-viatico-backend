@@ -15,7 +15,7 @@ func fromDBHistory(f *db.FuelHistory) *entities.FuelHistoryValidated {
 		Price:     f.Price,
 	}
 
-	return entities.NewhistoryValidated(history)
+	return entities.NewFuelHistoryValidated(history)
 }
 
 func toDBHistory(f *entities.FuelHistoryValidated) *db.FuelHistory {

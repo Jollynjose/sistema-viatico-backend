@@ -10,17 +10,17 @@ func (f *FuelValidated) IsValidated() bool {
 	return f.isValid
 }
 
-func NewFuelValidated(fuel Fuel, isValid bool) *FuelValidated {
+func NewFuelValidated(fuel *Fuel) *FuelValidated {
 	if err := fuel.validate(); err != nil {
 		return &FuelValidated{
-			Fuel:    fuel,
+			Fuel:    *fuel,
 			isValid: false,
 			Err:     err,
 		}
 	}
 
 	return &FuelValidated{
-		Fuel:    fuel,
+		Fuel:    *fuel,
 		isValid: true,
 		Err:     nil,
 	}

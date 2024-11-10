@@ -7,7 +7,7 @@ import (
 )
 
 type FuelHistoryService interface {
-	FindAll() (*query.FuelHistoriesQueryResult, error)
+	FindAllByFuelID(fuelID uuid.UUID) (*query.FuelHistoriesQueryResult, error)
 	FindByFuelID(FuelID uuid.UUID) (*query.FuelHistoryQueryResult, error)
-	Create(history *command.CreatehistoryCommand) (*command.CreatehistoryCommandResults, error)
+	Create(history *command.CreateFuelHistoryCommand) (*command.CreateFuelHistoryCommandResults, error)
 }
