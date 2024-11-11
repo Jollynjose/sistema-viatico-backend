@@ -193,7 +193,15 @@ func (u *UserService) UpdateById(id string, userCommand *command.UpdateUserComma
 		dbUser.JobPostionSpecification = userCommand.JobPostionSpecification
 	}
 
-	u.userRepository.UpdateById(id, &dbUser)
+	userEntity, err := u.userRepository.UpdateById(id, &dbUser)
 
-	return nil, nil
+	if err != nil {
+		return nil, err
+	}
+
+	mappedUser := mapper.NewUserResultFromValidatedEntity(userEntity)
+
+	return &command.UpdateUserCommandResult{
+		Result: mappedUser,
+	}, nil
 }

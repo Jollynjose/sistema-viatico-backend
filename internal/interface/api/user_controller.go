@@ -24,6 +24,7 @@ func NewUserController(router *http.ServeMux, service interfaces.UserService) *U
 	router.HandleFunc("POST /hello", controller.hello)
 	router.HandleFunc("GET /", controller.FindAll)
 	router.HandleFunc("GET /{id}", controller.FindUserById)
+	router.HandleFunc("PUT /{id}", controller.UpdateUserById)
 
 	return controller
 }
@@ -55,7 +56,7 @@ func (uc *UserController) FindAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uc *UserController) FindUserById(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	id := r.PathValue("id")
 
 	err := uuid.Validate(id)
 
@@ -79,7 +80,7 @@ func (uc *UserController) FindUserById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uc *UserController) UpdateUserById(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+	id := r.PathValue("id")
 
 	err := uuid.Validate(id)
 

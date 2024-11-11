@@ -20,29 +20,47 @@ func OpenDB(cfg *config.Config) *gorm.DB {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-	// Uncomment the following lines to create ENUM types in the database
-	// db.Exec("CREATE TYPE roles AS ENUM ('admin', 'general', 'manager')")
-	// db.Exec("CREATE TYPE fuel_price_type AS ENUM ('diesel', 'gasoline')")
-
-	db.AutoMigrate(
-		&JobPosition{},
-		&JobPositionHistory{},
-		&Region{},
-		&Province{},
-		&Municipality{},
-		&Route{},
-		&Stop{},
-		&Toll{},
-		&FuelHistory{},
-		&Fuel{},
-		&UserTravelHistory{},
-		&TravelExpense{},
-		&User{},
-	)
-
 	if err != nil {
 		panic("failed to connect database")
 	}
+
+	if cfg.ENV == "dev" {
+		db.Exec(`
+		DO $$
+		Begin
+			IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'roles') THEN
+				RAISE NOTICE 'roles ENUM already exists';
+			ELSE
+				CREATE TYPE roles AS ENUM ('admin', 'user');
+			END IF;
+			
+			IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'fuel_price_type') THEN
+				RAISE NOTICE 'fuel_price_type ENUM already exists';
+			ELSE
+				CREATE TYPE fuel_price_type AS ENUM ('regular', 'diesel');
+			END IF;
+		End;
+		$$
+	`)
+
+		db.AutoMigrate(
+			&JobPosition{},
+			&JobPositionHistory{},
+			&Region{},
+			&Province{},
+			&Municipality{},
+			&Route{},
+			&Stop{},
+			&Toll{},
+			&FuelHistory{},
+			&Fuel{},
+			&UserTravelHistory{},
+			&TravelExpense{},
+			&User{},
+		)
+	}
+
+	// Uncomment the following lines to create ENUM types in the database
 
 	return db
 }

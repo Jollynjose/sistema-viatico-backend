@@ -23,6 +23,7 @@ func NewFuelResultFromEntity(j *entities.Fuel) *common.FuelResult {
 	return &common.FuelResult{
 		ID:        j.ID,
 		Name:      j.Name,
+		Type:      j.Type,
 		CreatedAt: j.CreatedAt,
 		UpdatedAt: j.UpdatedAt,
 		History:   fuelHistoryResults,

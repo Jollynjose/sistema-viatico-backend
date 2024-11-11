@@ -16,6 +16,7 @@ func fromDBFuel(f *db.Fuel) *entities.Fuel {
 	fuel := &entities.Fuel{
 		ID:        uuid.MustParse(f.ID),
 		Name:      f.Name,
+		Type:      f.Type,
 		History:   history,
 		CreatedAt: f.CreatedAt,
 		UpdatedAt: f.UpdatedAt,
@@ -34,6 +35,7 @@ func toDBFuel(f *entities.FuelValidated) *db.Fuel {
 	fuel := &db.Fuel{
 		Name:    f.Fuel.Name,
 		History: history,
+		Type:    f.Fuel.Type,
 		Base: db.Base{
 			ID:        f.Fuel.ID.String(),
 			CreatedAt: f.Fuel.CreatedAt,

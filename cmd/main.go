@@ -26,12 +26,18 @@ func main() {
 	provinceRouter := http.NewServeMux()
 	municipalityRouter := http.NewServeMux()
 	ingestionRouter := http.NewServeMux()
+	jobPositionRouter := http.NewServeMux()
+	fuelRouter := http.NewServeMux()
+	fuelHistoryRouter := http.NewServeMux()
 
 	// Repositories
 	userRepository := repository.NewGormUserRepository(gormDb)
 	regionRepository := repository.NewGormRegionRepository(gormDb)
 	provinceRepository := repository.NewGormProvinceRepository(gormDb)
 	municipalityRepository := repository.NewGormMunicipalityRepository(gormDb)
+	jobPositionRepository := repository.NewGormJobPositionRepository(gormDb)
+	fuelRepository := repository.NewGormFuelRepository(gormDb)
+	fuelHistoryRepository := repository.NewGormFuelHistoryRepository(gormDb)
 
 	// Services
 	userService := services.NewUserService(userRepository)
@@ -39,6 +45,9 @@ func main() {
 	provinceService := services.NewProvinceService(provinceRepository, cfg)
 	municipalityService := services.NewMunicipalityService(municipalityRepository, cfg)
 	ingestionService := services.NewIngestionService(municipalityService, provinceService, regionService, cfg)
+	jobPositionService := services.NewJobPositionService(jobPositionRepository)
+	fuelService := services.NewFuelService(fuelRepository)
+	fuelHistoryService := services.NewFuelHistoryService(fuelHistoryRepository)
 
 	// Mount the userRouter
 	mainRouter.Handle("/user/", http.StripPrefix("/user", userRouter))
@@ -47,6 +56,9 @@ func main() {
 	mainRouter.Handle("/province/", http.StripPrefix("/province", provinceRouter))
 	mainRouter.Handle("/municipality/", http.StripPrefix("/municipality", municipalityRouter))
 	mainRouter.Handle("/ingest/", http.StripPrefix("/ingest", ingestionRouter))
+	mainRouter.Handle("/job-position/", http.StripPrefix("/job-position", jobPositionRouter))
+	mainRouter.Handle("/fuel/", http.StripPrefix("/fuel", fuelRouter))
+	mainRouter.Handle("/fuel-history/", http.StripPrefix("/fuel-history", fuelHistoryRouter))
 
 	// Controllers
 	api.NewUserController(userRouter, userService)
@@ -55,6 +67,9 @@ func main() {
 	api.NewProvinceController(provinceRouter, provinceService)
 	api.NewMunicipalityController(municipalityRouter, municipalityService)
 	api.NewIngestionController(ingestionRouter, ingestionService)
+	api.NewJobPositionController(jobPositionRouter, jobPositionService)
+	api.NewFuelController(fuelRouter, fuelService)
+	api.NewFuelHistoryController(fuelHistoryRouter, fuelHistoryService)
 
 	// Create the server
 	server := &http.Server{

@@ -12,7 +12,7 @@ type FuelRepository struct {
 	db *gorm.DB
 }
 
-func NewFuelRepository(db *gorm.DB) repositories.FuelRepository {
+func NewGormFuelRepository(db *gorm.DB) repositories.FuelRepository {
 	return &FuelRepository{db}
 }
 
@@ -23,7 +23,14 @@ func (r *FuelRepository) FindAll() ([]*entities.Fuel, error) {
 		return nil, err
 	}
 
-	return nil, nil
+	var fuels []*entities.Fuel
+
+	for _, f := range dbFuels {
+		fuel := fromDBFuel(&f)
+		fuels = append(fuels, fuel)
+	}
+
+	return fuels, nil
 }
 
 func (r *FuelRepository) Create(f *entities.FuelValidated) (*entities.Fuel, error) {

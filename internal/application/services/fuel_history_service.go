@@ -15,7 +15,7 @@ type FuelHistoryService struct {
 	repo repositories.FuelHistoryRepository
 }
 
-func NewFuelHistoryServicee(repo repositories.FuelHistoryRepository) interfaces.FuelHistoryService {
+func NewFuelHistoryService(repo repositories.FuelHistoryRepository) interfaces.FuelHistoryService {
 	return &FuelHistoryService{
 		repo: repo,
 	}

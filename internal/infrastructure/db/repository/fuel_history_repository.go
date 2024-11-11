@@ -12,7 +12,7 @@ type FuelHistoryRepository struct {
 	db *gorm.DB
 }
 
-func NewFuelHistoryRepository(db *gorm.DB) repositories.FuelHistoryRepository {
+func NewGormFuelHistoryRepository(db *gorm.DB) repositories.FuelHistoryRepository {
 	return &FuelHistoryRepository{db}
 }
 

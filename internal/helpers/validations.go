@@ -1,8 +1,6 @@
 package helpers
 
 import (
-	"fmt"
-
 	"github.com/Jollynjose/sistema-viatico-backend/internal/config"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/infrastructure/db"
 )
@@ -28,7 +26,6 @@ func IsGeneral(role string) bool {
 }
 
 func IsValidRole(role string) bool {
-	fmt.Println(role)
 	return IsAdmin(role) || IsManager(role) || IsGeneral(role)
 }
 

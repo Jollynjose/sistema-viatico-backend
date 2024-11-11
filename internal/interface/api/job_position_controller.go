@@ -7,25 +7,27 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/helpers"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/mapper"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/request"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/response"
 	"github.com/google/uuid"
 )
 
-type JobPostionController struct {
+type JobPositionController struct {
 	service interfaces.JobPositionService
 }
 
-func NewJobPostionController(router *http.ServeMux, service interfaces.JobPositionService) *JobPostionController {
-	controller := &JobPostionController{
+func NewJobPositionController(router *http.ServeMux, service interfaces.JobPositionService) *JobPositionController {
+	controller := &JobPositionController{
 		service: service,
 	}
 
 	router.HandleFunc("GET /", controller.FindAll)
 	router.HandleFunc("GET /{id}", controller.FindById)
+	router.HandleFunc("POST /", controller.Create)
 	return controller
 }
 
-func (ctrl *JobPostionController) FindAll(w http.ResponseWriter, r *http.Request) {
+func (ctrl *JobPositionController) FindAll(w http.ResponseWriter, r *http.Request) {
 	jobPositionQuery, err := ctrl.service.FindAll()
 
 	if err != nil {
@@ -46,8 +48,8 @@ func (ctrl *JobPostionController) FindAll(w http.ResponseWriter, r *http.Request
 	helpers.ResponseHandler(w, http.StatusOK, response)
 }
 
-func (ctrl *JobPostionController) FindById(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
+func (ctrl *JobPositionController) FindById(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
 
 	idToUuid, err := uuid.Parse(id)
 
@@ -68,4 +70,26 @@ func (ctrl *JobPostionController) FindById(w http.ResponseWriter, r *http.Reques
 	response := mapper.ToJobPositionResponse(jobPositionQuery.Result)
 
 	helpers.ResponseHandler(w, http.StatusOK, response)
+}
+
+func (ctrl *JobPositionController) Create(w http.ResponseWriter, r *http.Request) {
+	var createJobPositionRequest request.CreateJobPositionRequest
+
+	err := helpers.DecodeJSONBody(w, r, &createJobPositionRequest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	createJobPositionCommand := createJobPositionRequest.ToCreateJobPositionCommand()
+	result, err := ctrl.service.Create(createJobPositionCommand)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := mapper.ToJobPositionResponse(result.Result)
+
+	helpers.ResponseHandler(w, http.StatusCreated, response)
 }
