@@ -93,3 +93,21 @@ func (s *MunicipalityService) FindAll() (*query.MunicipalitiesQueryResult, error
 		Results: municipalitiesResults,
 	}, nil
 }
+
+func (s *MunicipalityService) FindByRegionCode(regionCode string) (*query.MunicipalitiesQueryResult, error) {
+	results, err := s.MunicipalityRepository.FindByRegionCode(regionCode)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var municipalitiesResults []*common.MunicipalityResult
+
+	for _, result := range results {
+		municipalitiesResults = append(municipalitiesResults, mapper.NewMunicipalityResultFromEntity(result))
+	}
+
+	return &query.MunicipalitiesQueryResult{
+		Results: municipalitiesResults,
+	}, nil
+}

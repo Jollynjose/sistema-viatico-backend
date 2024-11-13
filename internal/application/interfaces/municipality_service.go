@@ -9,4 +9,5 @@ import (
 type MunicipalityService interface {
 	IngestMunicipality(region *common.RegionResult) (*command.IngestMunicipalityCommandResult, error)
 	FindAll() (*query.MunicipalitiesQueryResult, error)
+	FindByRegionCode(regionCode string) (*query.MunicipalitiesQueryResult, error)
 }

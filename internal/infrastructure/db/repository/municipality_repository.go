@@ -66,3 +66,21 @@ func (r *GormMunicipalityRepository) FindAll() ([]*entities.Municipality, error)
 
 	return municipalities, nil
 }
+
+func (r *GormMunicipalityRepository) FindByRegionCode(regionCode string) ([]*entities.Municipality, error) {
+	var dbMunicipality []db.Municipality
+
+	err := r.db.Find(&dbMunicipality, "region_code = ?", regionCode).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	municipalities := make([]*entities.Municipality, len(dbMunicipality))
+
+	for i, dbMunicipality := range dbMunicipality {
+		municipalities[i] = fromDBMunicipality(&dbMunicipality)
+	}
+
+	return municipalities, nil
+}

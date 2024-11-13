@@ -9,6 +9,7 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/common"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/mapper"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/application/query"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/config"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/repositories"
@@ -70,5 +71,24 @@ func (s *RegionService) IngestRegion() (*command.IngestRegionCommandResult, erro
 
 	return &command.IngestRegionCommandResult{
 		Result: results,
+	}, nil
+}
+
+func (s *RegionService) FindAll() (*query.FindAllRegionQueryResult, error) {
+	regions, err := s.RegionRepository.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	var results []*common.RegionResult
+
+	for _, region := range regions {
+		result := mapper.NewRegionResultFromValidatedEntity(region)
+
+		results = append(results, result)
+	}
+
+	return &query.FindAllRegionQueryResult{
+		Results: results,
 	}, nil
 }

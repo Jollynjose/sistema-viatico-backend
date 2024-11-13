@@ -71,15 +71,18 @@ func main() {
 	api.NewFuelController(fuelRouter, fuelService)
 	api.NewFuelHistoryController(fuelHistoryRouter, fuelHistoryService)
 
+	// Middleware chain
+	chain := middlewares.Chain(middlewares.Cors, middlewares.Logger)
+
 	// Create the server
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%s", cfg.PORT),
-		Handler: middlewares.Logger(mainRouter),
+		Handler: chain(mainRouter),
 	}
 
 	fmt.Println("Server is running on port ", cfg.PORT)
 	// Initialize the server
-	err := server.ListenAndServe()
+	err := server.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 
 	if err != nil {
 		fmt.Println(err)
