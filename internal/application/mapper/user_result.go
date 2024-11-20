@@ -23,5 +23,6 @@ func NewUserResultFromEntity(user *entities.User) *common.UserResult {
 		Email:         user.Email,
 		Role:          string(user.Role),
 		JobPositionID: user.JobPositionID,
+		JobPosition:   NewJobPositionResultFromEntity(user.JobPosition),
 	}
 }

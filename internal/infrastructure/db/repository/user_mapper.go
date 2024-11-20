@@ -24,6 +24,7 @@ func toDBUser(user *entities.UserValidated) *db.User {
 }
 
 func fromDBUser(dbUser *db.User) *entities.User {
+
 	user := &entities.User{
 		Id:                      uuid.MustParse(dbUser.ID),
 		CreatedAt:               dbUser.CreatedAt,
@@ -35,6 +36,10 @@ func fromDBUser(dbUser *db.User) *entities.User {
 		Role:                    dbUser.Role,
 		JobPositionID:           dbUser.JobPositionID,
 		JobPostionSpecification: dbUser.JobPostionSpecification,
+	}
+
+	if dbUser.JobPosition != nil {
+		user.JobPosition = fromDbJobPosition(dbUser.JobPosition)
 	}
 
 	return user

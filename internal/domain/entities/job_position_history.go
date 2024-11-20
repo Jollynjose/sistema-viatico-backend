@@ -51,3 +51,18 @@ func NewJobPositionHistory(lunch, breakfast, dinner, accommodation float64) *Job
 
 	return jobPositionHistory
 }
+
+func NewJobPositionHistoryWithJobPositionID(lunch, breakfast, dinner, accommodation float64, jobPositionID uuid.UUID) *JobPositionHistory {
+	jobPositionHistory := &JobPositionHistory{
+		ID:            uuid.New(),
+		Lunch:         lunch,
+		BreakFast:     breakfast,
+		Dinner:        dinner,
+		Accommodation: accommodation,
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
+		JobPositionID: jobPositionID,
+	}
+
+	return jobPositionHistory
+}

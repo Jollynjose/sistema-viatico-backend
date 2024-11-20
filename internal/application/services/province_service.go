@@ -9,6 +9,7 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/common"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/mapper"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/application/query"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/config"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/repositories"
@@ -71,5 +72,25 @@ func (s *ProvinceService) IngestProvince() (*command.IngestProvinceCommandResult
 
 	return &command.IngestProvinceCommandResult{
 		Result: results,
+	}, nil
+}
+
+func (s *ProvinceService) FindAll() (*query.FindAllProvinceQueryResult, error) {
+	provinces, err := s.ProvinceRepository.FindAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var mappedProvinces []*common.ProvinceResult
+
+	for _, province := range provinces {
+		mappedProvince := mapper.NewProvinceResultFromValidatedEntity(province)
+
+		mappedProvinces = append(mappedProvinces, mappedProvince)
+	}
+
+	return &query.FindAllProvinceQueryResult{
+		Results: mappedProvinces,
 	}, nil
 }

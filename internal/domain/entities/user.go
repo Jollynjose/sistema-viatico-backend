@@ -21,6 +21,7 @@ type User struct {
 	JobPositionID           string
 	Role                    db.Roles
 	JobPostionSpecification *string `json:"job_position_specification"`
+	JobPosition             *JobPosition
 }
 
 func (u *User) validate() error {

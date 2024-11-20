@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/command"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/application/common"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/helpers"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/mapper"
@@ -42,13 +43,33 @@ func (uc *UserController) FindAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var usersResponse []*response.FindUserResponse
+	var usersResponse []*response.FindAllUser
 
 	for _, userQuery := range usersQuery.Results {
-		usersResponse = append(usersResponse, mapper.ToFindUserResponse(userQuery))
+		jobPosition := userQuery.JobPosition
+		var jobPositionHistory *common.JobPositionHistoryResult
+
+		if jobPosition != nil {
+			jobPositionHistory = jobPosition.GetMostRecentJobHistory()
+		}
+
+		var jp response.JobPosition
+
+		if jobPositionHistory != nil {
+			jp = response.JobPosition{
+				ID:            jobPosition.ID.String(),
+				Name:          jobPosition.Name,
+				Lunch:         jobPositionHistory.Lunch,
+				BreakFast:     jobPositionHistory.BreakFast,
+				Dinner:        jobPositionHistory.Dinner,
+				Accommodation: jobPositionHistory.Accommodation,
+			}
+		}
+
+		usersResponse = append(usersResponse, mapper.ToFindAllUser(userQuery, &jp))
 	}
 
-	response := response.FindUsersResponse{
+	response := response.FindAllUsersResponse{
 		Users: usersResponse,
 	}
 

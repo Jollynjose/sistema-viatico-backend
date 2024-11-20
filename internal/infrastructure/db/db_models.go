@@ -46,7 +46,7 @@ type User struct {
 	Password                string              `json:"password" gorm:"not null"`
 	Role                    Roles               `json:"role" gorm:"roles;not null"`
 	JobPositionID           string              `json:"job_position_id" gorm:"not null"`
-	JobPosition             JobPosition         `json:"job_position" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	JobPosition             *JobPosition        `json:"job_position" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	JobPostionSpecification *string             `json:"job_position_specification" gorm:"size:255"`
 	TravelHistories         []UserTravelHistory `json:"travel_histories" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE;References:ID"`
 }
@@ -149,6 +149,7 @@ type UserTravelHistory struct {
 	IsBreakfastApplied     bool               `json:"is_breakfast_applied" gorm:"not null"`
 	IsDinnerApplied        bool               `json:"is_dinner_applied" gorm:"not null"`
 	IsAccommodationApplied bool               `json:"is_accommodation_applied" gorm:"not null"`
+	PassagePrice           float64            `json:"passage_price" gorm:"not null"`
 }
 
 type TravelExpense struct {
@@ -162,4 +163,6 @@ type TravelExpense struct {
 	RouteID           string              `json:"route_id" gorm:"not null"`
 	Route             Route               `json:"route" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	UserTravelHistory []UserTravelHistory `json:"user_travel_history" gorm:"foreignKey:TravelExpenseID;constraint:OnDelete:CASCADE;References:ID"`
+	TransporteType    string              `json:"transport_type" gorm:"not null"`
+	VisitMotivation   string              `json:"visit_motivation" gorm:"not null"`
 }

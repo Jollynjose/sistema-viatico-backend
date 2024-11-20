@@ -9,8 +9,10 @@ import (
 func fromDbJobPosition(j *db.JobPosition) *entities.JobPosition {
 	var jobPositionHistories []entities.JobPositionHistory
 
-	for _, jh := range j.JobPositionHistories {
-		jobPositionHistories = append(jobPositionHistories, *fromDBJobPositionHistory(&jh))
+	if len(j.JobPositionHistories) > 0 {
+		for _, jh := range j.JobPositionHistories {
+			jobPositionHistories = append(jobPositionHistories, *fromDBJobPositionHistory(&jh))
+		}
 	}
 
 	jobPosition := &entities.JobPosition{

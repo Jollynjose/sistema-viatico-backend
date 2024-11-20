@@ -21,7 +21,7 @@ func NewGormUserRepository(db *gorm.DB) repositories.UserRepository {
 func (r *GormUserRepository) FindAll() ([]*entities.User, error) {
 	var dbUsers []db.User
 
-	err := r.db.Find(&dbUsers).Error
+	err := r.db.Preload("JobPosition.JobPositionHistories").Find(&dbUsers).Error
 
 	if err != nil {
 		return nil, err
