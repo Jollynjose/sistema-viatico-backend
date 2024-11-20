@@ -17,7 +17,7 @@ func NewJobPositionHistoryController(router *http.ServeMux, service interfaces.J
 		service: service,
 	}
 
-	router.HandleFunc("/job_position_history", controller.CreateJobPositionHistory)
+	router.HandleFunc("POST /", controller.CreateJobPositionHistory)
 
 	return controller
 }

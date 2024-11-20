@@ -29,6 +29,7 @@ func main() {
 	jobPositionRouter := http.NewServeMux()
 	fuelRouter := http.NewServeMux()
 	fuelHistoryRouter := http.NewServeMux()
+	jobPositionHistoryRouter := http.NewServeMux()
 
 	// Repositories
 	userRepository := repository.NewGormUserRepository(gormDb)
@@ -38,6 +39,7 @@ func main() {
 	jobPositionRepository := repository.NewGormJobPositionRepository(gormDb)
 	fuelRepository := repository.NewGormFuelRepository(gormDb)
 	fuelHistoryRepository := repository.NewGormFuelHistoryRepository(gormDb)
+	jobPositionHistoryRepository := repository.NewGormJobPositionHistoryRepository(gormDb)
 
 	// Services
 	userService := services.NewUserService(userRepository)
@@ -48,6 +50,7 @@ func main() {
 	jobPositionService := services.NewJobPositionService(jobPositionRepository)
 	fuelService := services.NewFuelService(fuelRepository)
 	fuelHistoryService := services.NewFuelHistoryService(fuelHistoryRepository)
+	jobPositionHistoryService := services.NewJobPositionHistoriesService(jobPositionHistoryRepository)
 
 	// Mount the userRouter
 	mainRouter.Handle("/user/", http.StripPrefix("/user", userRouter))
@@ -59,6 +62,7 @@ func main() {
 	mainRouter.Handle("/job-position/", http.StripPrefix("/job-position", jobPositionRouter))
 	mainRouter.Handle("/fuel/", http.StripPrefix("/fuel", fuelRouter))
 	mainRouter.Handle("/fuel-history/", http.StripPrefix("/fuel-history", fuelHistoryRouter))
+	mainRouter.Handle("/job-position-history/", http.StripPrefix("/job-position-history", jobPositionHistoryRouter))
 
 	// Controllers
 	api.NewUserController(userRouter, userService)
@@ -70,6 +74,7 @@ func main() {
 	api.NewJobPositionController(jobPositionRouter, jobPositionService)
 	api.NewFuelController(fuelRouter, fuelService)
 	api.NewFuelHistoryController(fuelHistoryRouter, fuelHistoryService)
+	api.NewJobPositionHistoryController(jobPositionHistoryRouter, jobPositionHistoryService)
 
 	// Middleware chain
 	chain := middlewares.Chain(middlewares.Cors, middlewares.Logger)

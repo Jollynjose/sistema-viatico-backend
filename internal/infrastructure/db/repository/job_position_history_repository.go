@@ -10,7 +10,7 @@ type JobPositionHistoryRepository struct {
 	db *gorm.DB
 }
 
-func NewJobPositionHistoryRepository(db *gorm.DB) repositories.JobPositionHistoryRepository {
+func NewGormJobPositionHistoryRepository(db *gorm.DB) repositories.JobPositionHistoryRepository {
 	return &JobPositionHistoryRepository{
 		db: db,
 	}
