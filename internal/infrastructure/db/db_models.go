@@ -79,22 +79,22 @@ type Region struct {
 
 type Province struct {
 	Base
-	Name           string         `json:"name" gorm:"not null"`
-	Identifier     string         `json:"identifier" gorm:"uniqueIndex;not null"`
-	RegionCode     string         `json:"region_code" gorm:"not null"`
-	Municipalities []Municipality `json:"municipalities" gorm:"foreignKey:ProvinceCode;constraint:OnDelete:CASCADE;REFERENCES:Code"`
-	Code           string         `json:"code" gorm:"uniqueIndex;not null"`
+	Name                     string         `json:"name" gorm:"not null"`
+	Identifier               string         `json:"identifier" gorm:"uniqueIndex;not null"`
+	RegionCode               string         `json:"region_code" gorm:"not null"`
+	Municipalities           []Municipality `json:"municipalities" gorm:"foreignKey:ProvinceCode;constraint:OnDelete:CASCADE;REFERENCES:Code"`
+	Code                     string         `json:"code" gorm:"uniqueIndex;not null"`
+	StartingPointsProvince   []Route        `json:"starting_points_province" gorm:"foreignKey:StartingPointProvinceID;constraint:OnDelete:CASCADE;References:ID"`
+	FinalDestinationProvince []Route        `json:"final_destination_province" gorm:"foreignKey:FinalDestinationProvinceID;constraint:OnDelete:CASCADE;References:ID"`
 }
 
 type Municipality struct {
 	Base
-	Name         string  `json:"name" gorm:"not null"`
-	Identifier   string  `json:"identifier" gorm:"uniqueIndex;not null"`
-	ProvinceCode string  `json:"province_code" gorm:"not null;index"`
-	RegionCode   string  `json:"region_code" gorm:"not null;index"`
-	Code         string  `json:"code" gorm:"not null"`
-	Routes       []Route `json:"routes" gorm:"foreignKey:StartingPointMunicipalityID;constraint:OnDelete:CASCADE;References:ID"`
-	Stops        []Stop  `json:"stops" gorm:"foreignKey:MunicipalityID;constraint:OnDelete:CASCADE;References:ID"`
+	Name         string `json:"name" gorm:"not null"`
+	Identifier   string `json:"identifier" gorm:"uniqueIndex;not null"`
+	ProvinceCode string `json:"province_code" gorm:"not null;index"`
+	RegionCode   string `json:"region_code" gorm:"not null;index"`
+	Code         string `json:"code" gorm:"not null"`
 }
 
 type FuelHistory struct {
@@ -112,23 +112,13 @@ type Fuel struct {
 
 type Route struct {
 	Base
-	StartingPointMunicipalityID string       `json:"starting_point_municipality_id" gorm:"not null"`
-	StartingPointMunicipality   Municipality `json:"starting_point_municipality" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Description                 string       `json:"description" gorm:"not null"`
-	Name                        string       `json:"name" gorm:"not null"`
-	TotalKms                    int          `json:"total_kms" gorm:"not null"`
-	Stops                       []Stop       `json:"stops" gorm:"foreignKey:RouteID;constraint:OnDelete:CASCADE;References:ID"`
+	Description                string   `json:"description" gorm:"not null"`
+	TotalKms                   int      `json:"total_kms" gorm:"not null"`
+	StartingPointProvinceID    string   `json:"starting_point_province_id" gorm:"not null"`
+	StartingPointProvince      Province `json:"starting_point_province" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	FinalDestinationProvinceID string   `json:"final_destination_province_id" gorm:"not null"`
+	FinalDestinationProvince   Province `json:"final_destination_province" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
-
-type Stop struct {
-	Base
-	Order          int          `json:"order" gorm:"not null"`
-	RouteID        string       `json:"route_id" gorm:"not null"`
-	Route          Route        `json:"route" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	MunicipalityID string       `json:"municipality_id" gorm:"not null"`
-	Municipality   Municipality `json:"municipality" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-}
-
 type Toll struct {
 	Base
 	Price float64 `json:"price" gorm:"not null"`
