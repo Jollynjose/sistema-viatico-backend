@@ -121,8 +121,9 @@ type Route struct {
 }
 type Toll struct {
 	Base
-	Price float64 `json:"price" gorm:"not null"`
-	Order int     `json:"order" gorm:"not null"`
+	Price           float64 `json:"price" gorm:"not null"`
+	Order           int     `json:"order" gorm:"not null"`
+	TravelExpenseID string  `json:"travel_expense_id" gorm:"not null"`
 }
 
 type UserTravelHistory struct {
@@ -134,7 +135,7 @@ type UserTravelHistory struct {
 	JobPositionHistoryID   string             `json:"job_position_history_id" gorm:"not null"`
 	JobPositionHistory     JobPositionHistory `json:"job_position_history" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	TotalPrice             float64            `json:"total_price" gorm:"not null"`
-	PlusPercentage         float64            `json:"plus_percentage" gorm:"not null"`
+	PlusPercentage         float64            `json:"plus_percentage" gorm:"not null;default:0"`
 	IsLunchApplied         bool               `json:"is_lunch_applied" gorm:"not null"`
 	IsBreakfastApplied     bool               `json:"is_breakfast_applied" gorm:"not null"`
 	IsDinnerApplied        bool               `json:"is_dinner_applied" gorm:"not null"`
@@ -155,4 +156,5 @@ type TravelExpense struct {
 	UserTravelHistory []UserTravelHistory `json:"user_travel_history" gorm:"foreignKey:TravelExpenseID;constraint:OnDelete:CASCADE;References:ID"`
 	TransporteType    string              `json:"transport_type" gorm:"not null"`
 	VisitMotivation   string              `json:"visit_motivation" gorm:"not null"`
+	Toll              []Toll              `json:"toll" gorm:"foreignKey:TravelExpenseID;constraint:OnDelete:CASCADE;References:ID"`
 }
