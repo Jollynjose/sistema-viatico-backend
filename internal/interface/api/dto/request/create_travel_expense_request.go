@@ -10,11 +10,8 @@ import (
 )
 
 type CreateTravelExpenseRequest struct {
-	ID                uuid.UUID                        `json:"id"`
 	FuelHistoryID     uuid.UUID                        `json:"fuel_history_id"`
 	TotalPrice        float64                          `json:"total_price"`
-	CreatedAt         time.Time                        `json:"created_at"`
-	UpdatedAt         time.Time                        `json:"updated_at"`
 	DepartureDate     time.Time                        `json:"departure_date"`
 	ArrivalDate       time.Time                        `json:"arrival_date"`
 	SolicitudeDate    time.Time                        `json:"solicitude_date"`
@@ -29,11 +26,8 @@ func (r *CreateTravelExpenseRequest) ToCreateTravelExpenseCommand() (*command.Cr
 	route := *r.Route.ToCreateRouteCommand()
 
 	travelExpense := &command.CreateTravelExpenseCommand{
-		ID:                r.ID,
 		FuelHistoryID:     r.FuelHistoryID,
 		TotalPrice:        r.TotalPrice,
-		CreatedAt:         r.CreatedAt,
-		UpdatedAt:         r.UpdatedAt,
 		DepartureDate:     r.DepartureDate,
 		ArrivalDate:       r.ArrivalDate,
 		SolicitudeDate:    r.SolicitudeDate,

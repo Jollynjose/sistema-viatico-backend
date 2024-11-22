@@ -11,6 +11,7 @@ func ToDBRoute(r *entities.RouteValidated) *db.Route {
 		Description:                r.Description,
 		StartingPointProvinceID:    r.StartingPointProvinceID.String(),
 		FinalDestinationProvinceID: r.FinalDestinationProvinceID.String(),
+		TotalKms:                   r.TotalKms,
 		Base: db.Base{
 			ID:        r.ID.String(),
 			CreatedAt: r.CreatedAt,
@@ -27,7 +28,22 @@ func FromDBRoute(r *db.Route) *entities.Route {
 		Description:                r.Description,
 		StartingPointProvinceID:    uuid.MustParse(r.StartingPointProvinceID),
 		FinalDestinationProvinceID: uuid.MustParse(r.FinalDestinationProvinceID),
+		TotalKms:                   r.TotalKms,
 	}
 
 	return route
+}
+
+func ToDBRouteNormal(r *entities.Route) *db.Route {
+	return &db.Route{
+		Description:                r.Description,
+		StartingPointProvinceID:    r.StartingPointProvinceID.String(),
+		FinalDestinationProvinceID: r.FinalDestinationProvinceID.String(),
+		TotalKms:                   r.TotalKms,
+		Base: db.Base{
+			ID:        r.ID.String(),
+			CreatedAt: r.CreatedAt,
+			UpdatedAt: r.UpdatedAt,
+		},
+	}
 }

@@ -20,7 +20,7 @@ func NewRouteController(router *http.ServeMux, service interfaces.RouteService) 
 
 	router.HandleFunc("GET /", ctrl.GetRoutes)
 	router.HandleFunc("GET /:id", ctrl.GetRoute)
-	router.HandleFunc("POST /", ctrl.CreateRoute)
+	router.HandleFunc("POST /p", ctrl.CreateRoute)
 
 	return ctrl
 }

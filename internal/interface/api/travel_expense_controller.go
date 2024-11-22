@@ -16,6 +16,10 @@ type TravelExpenseController struct {
 func NewTravelExpenseController(router *http.ServeMux, service interfaces.TravelExpenseService) *TravelExpenseController {
 	ctrl := &TravelExpenseController{service: service}
 
+	router.HandleFunc("POST /create", ctrl.Create)
+	router.HandleFunc("GET /{id}", ctrl.FindOne)
+	router.HandleFunc("GET /pdf", ctrl.PDF)
+
 	return ctrl
 }
 
@@ -64,4 +68,17 @@ func (ctrl *TravelExpenseController) FindOne(w http.ResponseWriter, r *http.Requ
 	}
 
 	helpers.ResponseHandler(w, http.StatusOK, travelExpense)
+}
+
+func (ctrl *TravelExpenseController) PDF(w http.ResponseWriter, r *http.Request) {
+	pdf, err := helpers.GeneratePDF()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/pdf")
+	w.Write(pdf)
+	w.WriteHeader(http.StatusOK)
 }

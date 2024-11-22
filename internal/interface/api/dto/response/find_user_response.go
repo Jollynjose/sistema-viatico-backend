@@ -11,7 +11,7 @@ type FindUserResponse struct {
 	UpdatedAt               time.Time `json:"updated_at"`
 	Role                    string    `json:"role"`
 	JobPositionID           string    `json:"job_position_id"`
-	JobPostionSpecification *string   `json:"job_position_specification"`
+	JobPostionSpecification string    `json:"job_position_specification"`
 }
 
 type JobPosition struct {

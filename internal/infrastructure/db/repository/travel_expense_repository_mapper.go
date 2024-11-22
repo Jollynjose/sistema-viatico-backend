@@ -27,6 +27,7 @@ func ToDBUserTravel(userTravel *entities.TravelExpense) *db.TravelExpense {
 		},
 		FuelHistoryID:     userTravel.FuelHistoryID.String(),
 		RouteID:           userTravel.Route.ID.String(),
+		Route:             *ToDBRouteNormal(&userTravel.Route),
 		DepartureDate:     userTravel.DepartureDate,
 		ArrivalDate:       userTravel.ArrivalDate,
 		SolicitudeDate:    userTravel.SolicitudeDate,

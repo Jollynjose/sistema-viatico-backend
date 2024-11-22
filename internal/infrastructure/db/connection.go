@@ -37,7 +37,7 @@ func OpenDB(cfg *config.Config) *gorm.DB {
 			IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'fuel_price_type') THEN
 				RAISE NOTICE 'fuel_price_type ENUM already exists';
 			ELSE
-				CREATE TYPE fuel_price_type AS ENUM ('regular', 'diesel');
+				CREATE TYPE fuel_price_type AS ENUM ('gasoline', 'diesel');
 			END IF;
 		End;
 		$$
