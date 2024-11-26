@@ -31,7 +31,8 @@ func main() {
 	fuelHistoryRouter := http.NewServeMux()
 	jobPositionHistoryRouter := http.NewServeMux()
 	routeRouter := http.NewServeMux()
-	travelExpense := http.NewServeMux()
+	travelExpenseRouter := http.NewServeMux()
+	pdfGeneratorRouter := http.NewServeMux()
 
 	// Repositories
 	userRepository := repository.NewGormUserRepository(gormDb)
@@ -70,7 +71,8 @@ func main() {
 	mainRouter.Handle("/fuel-history/", http.StripPrefix("/fuel-history", fuelHistoryRouter))
 	mainRouter.Handle("/job-position-history/", http.StripPrefix("/job-position-history", jobPositionHistoryRouter))
 	mainRouter.Handle("/route/", http.StripPrefix("/route", routeRouter))
-	mainRouter.Handle("/travel-expense/", http.StripPrefix("/travel-expense", travelExpense))
+	mainRouter.Handle("/travel-expense/", http.StripPrefix("/travel-expense", travelExpenseRouter))
+	mainRouter.Handle("/pdf-generator/", http.StripPrefix("/pdf-generator", pdfGeneratorRouter))
 
 	// Controllers
 	api.NewUserController(userRouter, userService)
@@ -84,7 +86,8 @@ func main() {
 	api.NewFuelHistoryController(fuelHistoryRouter, fuelHistoryService)
 	api.NewJobPositionHistoryController(jobPositionHistoryRouter, jobPositionHistoryService)
 	api.NewRouteController(routeRouter, routeService)
-	api.NewTravelExpenseController(travelExpense, travelExpenseService)
+	api.NewTravelExpenseController(travelExpenseRouter, travelExpenseService)
+	api.NewGeneratePdfController(pdfGeneratorRouter, travelExpenseService, fuelService)
 
 	// Middleware chain
 	chain := middlewares.Chain(middlewares.Cors, middlewares.Logger)

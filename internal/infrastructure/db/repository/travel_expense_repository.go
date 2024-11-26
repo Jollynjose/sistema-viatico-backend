@@ -44,11 +44,11 @@ func (r *TravelExpenseRepository) Create(userTravel *entities.TravelExpense) (*e
 	return FromDBUserTravel(userTravelDB), nil
 }
 
-func (r *TravelExpenseRepository) FindOne(id uuid.UUID) (*entities.TravelExpense, error) {
+func (r *TravelExpenseRepository) FindOne(id uuid.UUID) (*db.TravelExpense, error) {
 	var userTravel db.TravelExpense
 	if err := r.db.Where("id = ?", id).First(&userTravel).Error; err != nil {
 		return nil, err
 	}
 
-	return FromDBUserTravel(&userTravel), nil
+	return &userTravel, nil
 }

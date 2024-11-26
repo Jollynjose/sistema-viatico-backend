@@ -4,9 +4,9 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/command"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/mapper"
-	"github.com/Jollynjose/sistema-viatico-backend/internal/application/query"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/repositories"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/infrastructure/db"
 	"github.com/google/uuid"
 )
 
@@ -75,16 +75,12 @@ func (s *TravelExpenseService) Create(travel *command.CreateTravelExpenseCommand
 	}, nil
 }
 
-func (s *TravelExpenseService) FindOne(id uuid.UUID) (*query.FindOneTravelExpenseQuery, error) {
+func (s *TravelExpenseService) FindOne(id uuid.UUID) (*db.TravelExpense, error) {
 	travel, err := s.repo.FindOne(id)
 
 	if err != nil {
 		return nil, err
 	}
 
-	result := mapper.NewTravelExpenseResultFromEntity(travel)
-
-	return &query.FindOneTravelExpenseQuery{
-		Result: result,
-	}, nil
+	return travel, nil
 }

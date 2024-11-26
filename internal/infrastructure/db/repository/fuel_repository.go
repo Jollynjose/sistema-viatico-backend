@@ -56,3 +56,15 @@ func (r *FuelRepository) FindByID(ID uuid.UUID) (*entities.Fuel, error) {
 
 	return fuel, nil
 }
+
+func (r *FuelRepository) FindOneByFuelHistoryId(fuelHistoryId uuid.UUID) (*db.Fuel, error) {
+	var dbFuel db.Fuel
+
+	err := r.db.Joins("History", r.db.Where(&db.FuelHistory{FuelID: fuelHistoryId.String()})).First(&dbFuel)
+
+	if err.Error != nil {
+		return nil, err.Error
+	}
+
+	return &dbFuel, nil
+}

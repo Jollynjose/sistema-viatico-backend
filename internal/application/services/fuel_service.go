@@ -8,6 +8,7 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/query"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/entities"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/domain/repositories"
+	"github.com/Jollynjose/sistema-viatico-backend/internal/infrastructure/db"
 	"github.com/google/uuid"
 )
 
@@ -91,4 +92,14 @@ func (s *FuelService) Create(fuel *command.CreateFuelCommand) (*command.CreateFu
 	return &command.CreateFuelCommandResult{
 		Result: fuelMapped,
 	}, nil
+}
+
+func (s *FuelService) FindOneByFuelHistoryId(fuelHistoryId uuid.UUID) (*db.Fuel, error) {
+	fuel, err := s.repo.FindOneByFuelHistoryId(fuelHistoryId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return fuel, nil
 }
