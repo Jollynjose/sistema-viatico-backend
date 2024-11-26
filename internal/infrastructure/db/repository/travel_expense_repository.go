@@ -6,6 +6,7 @@ import (
 	"github.com/Jollynjose/sistema-viatico-backend/internal/infrastructure/db"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type TravelExpenseRepository struct {
@@ -45,10 +46,17 @@ func (r *TravelExpenseRepository) Create(userTravel *entities.TravelExpense) (*e
 }
 
 func (r *TravelExpenseRepository) FindOne(id uuid.UUID) (*db.TravelExpense, error) {
-	var userTravel db.TravelExpense
-	if err := r.db.Where("id = ?", id).First(&userTravel).Error; err != nil {
+	var travelExpense db.TravelExpense
+	if err := r.db.
+		Preload("UserTravelHistory.User.JobPosition").
+		Preload("UserTravelHistory.JobPositionHistory").
+		Preload("Route.StartingPointProvince").
+		Preload("Route.FinalDestinationProvince").
+		Preload(clause.Associations).
+		Where("id = ?", id).
+		First(&travelExpense).Error; err != nil {
 		return nil, err
 	}
 
-	return &userTravel, nil
+	return &travelExpense, nil
 }

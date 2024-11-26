@@ -21,7 +21,12 @@ import (
 )
 
 func GeneratePDF(travelExpense *db.TravelExpense, fuel *db.Fuel) ([]byte, error) {
-	m := getMaroto(travelExpense, fuel)
+	m, err := getMaroto(travelExpense, fuel)
+
+	if err != nil {
+		return nil, err
+	}
+
 	document, err := m.Generate()
 	if err != nil {
 		return nil, err
@@ -30,7 +35,7 @@ func GeneratePDF(travelExpense *db.TravelExpense, fuel *db.Fuel) ([]byte, error)
 	return document.GetBytes(), nil
 }
 
-func getMaroto(travelExpense *db.TravelExpense, fuel *db.Fuel) core.Maroto {
+func getMaroto(travelExpense *db.TravelExpense, fuel *db.Fuel) (core.Maroto, error) {
 	cfg := config.NewBuilder().
 		WithPageNumber().
 		WithLeftMargin(10).
@@ -70,11 +75,21 @@ func getMaroto(travelExpense *db.TravelExpense, fuel *db.Fuel) core.Maroto {
 		}),
 	)
 
-	m.AddRows(getCombustibles(travelExpense, fuel)...)
+	combustiblesRow, err := getCombustibles(travelExpense, fuel)
+
+	if err != nil {
+		return nil, err
+	}
+
+	m.AddRows(combustiblesRow...)
 
 	m.AddRow(6)
 
 	m.AddRows(getPeaje(travelExpense)...)
+
+	m.AddRow(6)
+
+	m.AddRows(getMontoTotal(travelExpense)...)
 
 	m.AddRow(6)
 
@@ -98,7 +113,7 @@ func getMaroto(travelExpense *db.TravelExpense, fuel *db.Fuel) core.Maroto {
 		col.New(3),
 	)
 
-	return m
+	return m, nil
 }
 
 func getTransactions(travelExpense *db.TravelExpense) []core.Row {
@@ -144,7 +159,7 @@ func getTransactions(travelExpense *db.TravelExpense) []core.Row {
 
 		r := row.New(4).Add(
 			text.NewCol(1, content.CreatedAt.Format("2006-01-02"), props.Text{Size: 8, Align: align.Center}),
-			text.NewCol(1, fmt.Sprint(content.User.FirstName, content.User.FirstName), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, fmt.Sprintln(content.User.FirstName, content.User.LastName), props.Text{Size: 8, Align: align.Center}),
 			text.NewCol(1, content.User.JobPosition.Name, props.Text{Size: 8, Align: align.Center}),
 			text.NewCol(2, strconv.FormatFloat(accommadation, 'f', -1, 64), props.Text{Size: 8, Align: align.Center}),
 			text.NewCol(2, strconv.FormatFloat(breakfast, 'f', -1, 64), props.Text{Size: 8, Align: align.Center}),
@@ -166,7 +181,7 @@ func getTransactions(travelExpense *db.TravelExpense) []core.Row {
 	return rows
 }
 
-func getCombustibles(travelExpense *db.TravelExpense, fuel *db.Fuel) []core.Row {
+func getCombustibles(travelExpense *db.TravelExpense, fuel *db.Fuel) ([]core.Row, error) {
 	rows := []core.Row{
 		row.New(4).Add(
 			text.NewCol(2, "Combustible", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
@@ -181,19 +196,21 @@ func getCombustibles(travelExpense *db.TravelExpense, fuel *db.Fuel) []core.Row 
 
 	galonesConsumidos := travelExpense.Route.TotalKms / 30
 
+	galonesPrecio := float64(travelExpense.Route.TotalKms) * travelExpense.FuelHistory.Price
+
 	r := row.New(4).Add(
 		text.NewCol(2, fuel.Name, props.Text{Size: 8, Align: align.Center}),
 		text.NewCol(2, IntToString(travelExpense.Route.TotalKms), props.Text{Size: 8, Align: align.Center}),
 		text.NewCol(3, IntToString(galonesConsumidos), props.Text{Size: 8, Align: align.Center}),
-		text.NewCol(3, "30", props.Text{Size: 8, Align: align.Center}),
-		text.NewCol(2, "300", props.Text{Size: 8, Align: align.Center}),
+		text.NewCol(3, FloatToString(travelExpense.FuelHistory.Price), props.Text{Size: 8, Align: align.Center}),
+		text.NewCol(2, FloatToString(galonesPrecio), props.Text{Size: 8, Align: align.Center}),
 	)
 
 	contentsRow = append(contentsRow, r)
 
 	rows = append(rows, contentsRow...)
 
-	return rows
+	return rows, nil
 }
 
 func getPeaje(travelExpense *db.TravelExpense) []core.Row {
@@ -249,7 +266,7 @@ func getPageHeader(travelExpense *db.TravelExpense) core.Row {
 			}),
 		),
 		col.New(6).Add(
-			text.New(fmt.Sprintf("Motivo de salida: %s", FormatTimeToHHMMAMOrPM(travelExpense.ArrivalDate)), props.Text{
+			text.New(fmt.Sprintf("Motivo de salida: %s", travelExpense.VisitMotivation), props.Text{
 				Top: 0,
 			}),
 			text.New(fmt.Sprintf("Lugar de Partida: %s", travelExpense.Route.StartingPointProvince.Name), props.Text{
@@ -264,6 +281,29 @@ func getPageHeader(travelExpense *db.TravelExpense) core.Row {
 			}),
 		),
 	)
+}
+
+func getMontoTotal(travel *db.TravelExpense) []core.Row {
+	rows := []core.Row{
+		row.New(4).Add(
+			col.New(8),
+			text.NewCol(4, "Monto Total RD$", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).
+				WithStyle(&props.Cell{BackgroundColor: &props.Color{Red: 0, Green: 200, Blue: 0}}),
+		),
+	}
+
+	var contentsRow []core.Row
+
+	r := row.New(4).Add(
+		col.New(8),
+		text.NewCol(4, FloatToString(travel.TotalPrice), props.Text{Size: 8, Align: align.Center}),
+	)
+
+	contentsRow = append(contentsRow, r)
+
+	rows = append(rows, contentsRow...)
+
+	return rows
 }
 
 func getGrayColor() *props.Color {

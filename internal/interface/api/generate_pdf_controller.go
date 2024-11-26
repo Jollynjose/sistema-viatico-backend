@@ -5,7 +5,6 @@ import (
 
 	"github.com/Jollynjose/sistema-viatico-backend/internal/application/interfaces"
 	"github.com/Jollynjose/sistema-viatico-backend/internal/helpers"
-	"github.com/Jollynjose/sistema-viatico-backend/internal/interface/api/dto/request"
 	"github.com/google/uuid"
 )
 
@@ -24,20 +23,15 @@ func NewGeneratePdfController(
 		fuelService:          fuelService,
 	}
 
-	router.HandleFunc("POST /travel-expense", controller.GeneratePdf)
+	router.HandleFunc("GET /travel-expense/{id}", controller.GeneratePdf)
 
 	return controller
 }
 
 func (gpc *GeneratePdfController) GeneratePdf(w http.ResponseWriter, r *http.Request) {
-	var request request.GenerateTravelExpensePdf
+	idRaw := r.PathValue("id")
 
-	if err := helpers.DecodeJSONBody(w, r, &request); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	id, err := uuid.Parse(request.TravelExpenseId)
+	id, err := uuid.Parse(idRaw)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
