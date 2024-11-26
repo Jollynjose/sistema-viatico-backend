@@ -17,4 +17,5 @@ type CreateTravelExpenseCommand struct {
 	TransportType     string                           `json:"transport_type"`
 	VisitMotivation   string                           `json:"visit_motivation"`
 	Toll              []CreateTollCommand              `json:"toll"`
+	Dependency        string                           `json:"dependency"`
 }

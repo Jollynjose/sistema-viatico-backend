@@ -20,6 +20,7 @@ type CreateTravelExpenseRequest struct {
 	VisitMotivation   string                           `json:"visit_motivation"`
 	UserTravelHistory []CreateUserTravelHistoryRequest `json:"user_travel_history"`
 	Toll              []CreateTollRequest              `json:"toll"`
+	Dependency        string                           `json:"dependency"`
 }
 
 func (r *CreateTravelExpenseRequest) ToCreateTravelExpenseCommand() (*command.CreateTravelExpenseCommand, error) {
@@ -36,6 +37,7 @@ func (r *CreateTravelExpenseRequest) ToCreateTravelExpenseCommand() (*command.Cr
 		VisitMotivation:   r.VisitMotivation,
 		UserTravelHistory: make([]command.CreateUserTravelHistoryCommand, 0),
 		Toll:              make([]command.CreateTollCommand, 0),
+		Dependency:        r.Dependency,
 	}
 
 	if helpers.IsArrayEmpty(r.UserTravelHistory) {

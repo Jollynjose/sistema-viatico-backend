@@ -20,6 +20,7 @@ type TravelExpense struct {
 	TransportType     string              `json:"transport_type"`
 	VisitMotivation   string              `json:"visit_motivation"`
 	Toll              []Toll              `json:"toll"`
+	Dependency        string              `json:"dependency"`
 }
 
 func NewTravelExpenses(
@@ -31,6 +32,7 @@ func NewTravelExpenses(
 	route Route,
 	transportType string,
 	visitMotivation string,
+	dependency string,
 ) *TravelExpense {
 	return &TravelExpense{
 		ID:              uuid.New(),
@@ -44,6 +46,7 @@ func NewTravelExpenses(
 		TransportType:   transportType,
 		VisitMotivation: visitMotivation,
 		SolicitudeDate:  SolicitudeDate,
+		Dependency:      dependency,
 	}
 }
 

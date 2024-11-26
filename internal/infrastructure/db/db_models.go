@@ -157,4 +157,5 @@ type TravelExpense struct {
 	TransporteType    string              `json:"transport_type" gorm:"not null"`
 	VisitMotivation   string              `json:"visit_motivation" gorm:"not null"`
 	Toll              []Toll              `json:"toll" gorm:"foreignKey:TravelExpenseID;constraint:OnDelete:CASCADE;References:ID"`
+	Dependency        string              `json:"dependency" gorm:"not null;default:''"`
 }

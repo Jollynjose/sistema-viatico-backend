@@ -35,6 +35,7 @@ func (s *TravelExpenseService) Create(travel *command.CreateTravelExpenseCommand
 		*route,
 		travel.TransportType,
 		travel.VisitMotivation,
+		travel.Dependency,
 	)
 
 	for _, userTravelHistory := range travel.UserTravelHistory {

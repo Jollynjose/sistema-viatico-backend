@@ -71,14 +71,14 @@ func (ctrl *TravelExpenseController) FindOne(w http.ResponseWriter, r *http.Requ
 }
 
 func (ctrl *TravelExpenseController) PDF(w http.ResponseWriter, r *http.Request) {
-	pdf, err := helpers.GeneratePDF()
+	// pdf, err := helpers.GeneratePDF()
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Write(pdf)
+	// w.Write(pdf)
 	w.WriteHeader(http.StatusOK)
 }

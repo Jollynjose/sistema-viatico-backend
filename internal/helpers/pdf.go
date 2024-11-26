@@ -1,14 +1,16 @@
 package helpers
 
 import (
+	"fmt"
 	"log"
+	"strconv"
 
+	"github.com/Jollynjose/sistema-viatico-backend/internal/infrastructure/db"
 	"github.com/johnfercher/maroto/v2"
 
-	"github.com/johnfercher/maroto/v2/pkg/components/code"
 	"github.com/johnfercher/maroto/v2/pkg/components/col"
-	"github.com/johnfercher/maroto/v2/pkg/components/image"
 	"github.com/johnfercher/maroto/v2/pkg/components/row"
+	"github.com/johnfercher/maroto/v2/pkg/components/signature"
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
 	"github.com/johnfercher/maroto/v2/pkg/consts/align"
 	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
@@ -18,8 +20,8 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/props"
 )
 
-func GeneratePDF() ([]byte, error) {
-	m := getMaroto()
+func GeneratePDF(travelExpense *db.TravelExpense, fuel *db.Fuel) ([]byte, error) {
+	m := getMaroto(travelExpense, fuel)
 	document, err := m.Generate()
 	if err != nil {
 		return nil, err
@@ -28,7 +30,7 @@ func GeneratePDF() ([]byte, error) {
 	return document.GetBytes(), nil
 }
 
-func getMaroto() core.Maroto {
+func getMaroto(travelExpense *db.TravelExpense, fuel *db.Fuel) core.Maroto {
 	cfg := config.NewBuilder().
 		WithPageNumber().
 		WithLeftMargin(10).
@@ -36,84 +38,122 @@ func getMaroto() core.Maroto {
 		WithRightMargin(10).
 		Build()
 
-	darkGrayColor := getDarkGrayColor()
 	mrt := maroto.New(cfg)
 	m := maroto.NewMetricsDecorator(mrt)
 
-	err := m.RegisterHeader(getPageHeader())
+	err := m.RegisterHeader(getPageHeader(travelExpense))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	err = m.RegisterFooter(getPageFooter())
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	m.AddRows(text.NewRow(10, "Invoice ABC123456789", props.Text{
-		Top:   3,
-		Style: fontstyle.Bold,
-		Align: align.Center,
-	}))
 
 	m.AddRow(7,
-		text.NewCol(3, "Transactions", props.Text{
+		text.NewCol(12, "Calculo de Consumo", props.Text{
 			Top:   1.5,
 			Size:  9,
 			Style: fontstyle.Bold,
 			Align: align.Center,
-			Color: &props.WhiteColor,
 		}),
-	).WithStyle(&props.Cell{BackgroundColor: darkGrayColor})
-
-	m.AddRows(getTransactions()...)
-
-	m.AddRow(15,
-		col.New(6).Add(
-			code.NewBar("5123.151231.512314.1251251.123215", props.Barcode{
-				Percent: 0,
-				Proportion: props.Proportion{
-					Width:  20,
-					Height: 2,
-				},
-			}),
-			text.New("5123.151231.512314.1251251.123215", props.Text{
-				Top:    12,
-				Family: "",
-				Style:  fontstyle.Bold,
-				Size:   9,
-				Align:  align.Center,
-			}),
-		),
-		col.New(6),
 	)
+
+	m.AddRows(getTransactions(travelExpense)...)
+
+	m.AddRow(7,
+		text.NewCol(12, "Calculo de Combustible", props.Text{
+			Top:   1.5,
+			Size:  9,
+			Style: fontstyle.Bold,
+			Align: align.Center,
+		}),
+	)
+
+	m.AddRows(getCombustibles(travelExpense, fuel)...)
+
+	m.AddRow(6)
+
+	m.AddRows(getPeaje(travelExpense)...)
+
+	m.AddRow(6)
+
+	m.AddRow(12,
+		col.New(1),
+		signature.NewCol(5, "Solicitado Por:"),
+		signature.NewCol(5, "Aprobado Por: "),
+		col.New(1),
+	)
+
+	m.AddRow(12,
+		col.New(1),
+		signature.NewCol(5, "Revisado Por: "),
+		signature.NewCol(5, "Autorizado Por: "),
+		col.New(1),
+	)
+
+	m.AddRow(12,
+		col.New(3),
+		signature.NewCol(6, "Recibido conforme: "),
+		col.New(3),
+	)
+
 	return m
 }
 
-func getTransactions() []core.Row {
+func getTransactions(travelExpense *db.TravelExpense) []core.Row {
 	rows := []core.Row{
-		row.New(5).Add(
-			col.New(3),
-			text.NewCol(4, "Product", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(2, "Quantity", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(3, "Price", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-		),
+		row.New(4).Add(
+			text.NewCol(1, "Fecha", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(1, "Nombre", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(1, "Puesto", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(2, "Hospedaje", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(2, "Desayuno", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(1, "Almuerzo", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(1, "Cena", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(1, "Pasaje", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(1, "Total", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+		).WithStyle(&props.Cell{BackgroundColor: &props.Color{Red: 0, Green: 200, Blue: 0}}),
 	}
 
 	var contentsRow []core.Row
-	contents := getContents()
-	/*for i := 0; i < 8; i++ {
-	    contents = append(contents, contents...)
-	}*/
 
-	for i, content := range contents {
+	for i, content := range travelExpense.UserTravelHistory {
+		accommadation := content.JobPositionHistory.Accommodation
+		breakfast := content.JobPositionHistory.BreakFast
+		lunch := content.JobPositionHistory.Lunch
+		dinner := content.JobPositionHistory.Dinner
+
+		if !content.IsAccommodationApplied {
+			accommadation = 0
+		}
+
+		if !content.IsBreakfastApplied {
+			breakfast = 0
+		}
+
+		if !content.IsLunchApplied {
+			lunch = 0
+		}
+
+		if !content.IsDinnerApplied {
+			dinner = 0
+		}
+
+		total := accommadation + breakfast + lunch + dinner + content.PassagePrice
+
 		r := row.New(4).Add(
-			col.New(3),
-			text.NewCol(4, content[1], props.Text{Size: 8, Align: align.Center}),
-			text.NewCol(2, content[2], props.Text{Size: 8, Align: align.Center}),
-			text.NewCol(3, content[3], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, content.CreatedAt.Format("2006-01-02"), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, fmt.Sprint(content.User.FirstName, content.User.FirstName), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, content.User.JobPosition.Name, props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(2, strconv.FormatFloat(accommadation, 'f', -1, 64), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(2, strconv.FormatFloat(breakfast, 'f', -1, 64), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, strconv.FormatFloat(lunch, 'f', -1, 64), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, strconv.FormatFloat(dinner, 'f', -1, 64), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, strconv.FormatFloat(content.PassagePrice, 'f', -1, 64), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, strconv.FormatFloat(total, 'f', -1, 64), props.Text{Size: 8, Align: align.Center}),
 		)
-		if i%2 == 0 {
+		if i%2 == 1 {
 			gray := getGrayColor()
 			r.WithStyle(&props.Cell{BackgroundColor: gray})
 		}
@@ -123,83 +163,107 @@ func getTransactions() []core.Row {
 
 	rows = append(rows, contentsRow...)
 
-	rows = append(rows, row.New(20).Add(
-		col.New(7),
-		text.NewCol(2, "Total:", props.Text{
-			Top:   5,
-			Style: fontstyle.Bold,
-			Size:  8,
-			Align: align.Right,
-		}),
-		text.NewCol(3, "R$ 2.567,00", props.Text{
-			Top:   5,
-			Style: fontstyle.Bold,
-			Size:  8,
-			Align: align.Center,
-		}),
-	))
+	return rows
+}
+
+func getCombustibles(travelExpense *db.TravelExpense, fuel *db.Fuel) []core.Row {
+	rows := []core.Row{
+		row.New(4).Add(
+			text.NewCol(2, "Combustible", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(2, "Kilometraje", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(3, "Galones Consumidos", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(3, "Precio por galon RD$", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(2, "Total RD$", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+		).WithStyle(&props.Cell{BackgroundColor: &props.Color{Red: 0, Green: 200, Blue: 0}}),
+	}
+
+	var contentsRow []core.Row
+
+	galonesConsumidos := travelExpense.Route.TotalKms / 30
+
+	r := row.New(4).Add(
+		text.NewCol(2, fuel.Name, props.Text{Size: 8, Align: align.Center}),
+		text.NewCol(2, IntToString(travelExpense.Route.TotalKms), props.Text{Size: 8, Align: align.Center}),
+		text.NewCol(3, IntToString(galonesConsumidos), props.Text{Size: 8, Align: align.Center}),
+		text.NewCol(3, "30", props.Text{Size: 8, Align: align.Center}),
+		text.NewCol(2, "300", props.Text{Size: 8, Align: align.Center}),
+	)
+
+	contentsRow = append(contentsRow, r)
+
+	rows = append(rows, contentsRow...)
 
 	return rows
 }
 
-func getPageHeader() core.Row {
-	return row.New(20).Add(
-		image.NewFromFileCol(3, "docs/assets/images/biplane.jpg", props.Rect{
-			Center:  true,
-			Percent: 80,
-		}),
-		col.New(6),
-		col.New(3).Add(
-			text.New("AnyCompany Name Inc. 851 Any Street Name, Suite 120, Any City, CA 45123.", props.Text{
-				Size:  8,
-				Align: align.Right,
-				Color: getRedColor(),
-			}),
-			text.New("Tel: 55 024 12345-1234", props.Text{
-				Top:   12,
-				Style: fontstyle.BoldItalic,
-				Size:  8,
-				Align: align.Right,
-				Color: getBlueColor(),
-			}),
-			text.New("www.mycompany.com", props.Text{
-				Top:   15,
-				Style: fontstyle.BoldItalic,
-				Size:  8,
-				Align: align.Right,
-				Color: getBlueColor(),
-			}),
+func getPeaje(travelExpense *db.TravelExpense) []core.Row {
+	rows := []core.Row{
+		row.New(4).Add(
+			col.New(6),
+			text.NewCol(2, "C/peaje", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).
+				WithStyle(&props.Cell{BackgroundColor: &props.Color{Red: 0, Green: 200, Blue: 0}}),
+			text.NewCol(2, "Precio Peaje", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).
+				WithStyle(&props.Cell{BackgroundColor: &props.Color{Red: 0, Green: 200, Blue: 0}}),
+			text.NewCol(2, "Total RD$", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}).
+				WithStyle(&props.Cell{BackgroundColor: &props.Color{Red: 0, Green: 200, Blue: 0}}),
 		),
-	)
-}
-
-func getPageFooter() core.Row {
-	return row.New(20).Add(
-		col.New(12).Add(
-			text.New("Tel: 55 024 12345-1234", props.Text{
-				Top:   13,
-				Style: fontstyle.BoldItalic,
-				Size:  8,
-				Align: align.Left,
-				Color: getBlueColor(),
-			}),
-			text.New("www.mycompany.com", props.Text{
-				Top:   16,
-				Style: fontstyle.BoldItalic,
-				Size:  8,
-				Align: align.Left,
-				Color: getBlueColor(),
-			}),
-		),
-	)
-}
-
-func getDarkGrayColor() *props.Color {
-	return &props.Color{
-		Red:   55,
-		Green: 55,
-		Blue:  55,
 	}
+
+	var contentsRow []core.Row
+	contents := travelExpense.Toll
+	/*for i := 0; i < 8; i++ {
+	    contents = append(contents, contents...)
+	}*/
+
+	for _, content := range contents {
+		r := row.New(4).Add(
+			col.New(6),
+			text.NewCol(2, IntToString(content.Order), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(2, FloatToString(content.Price), props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(2, FloatToString(content.Price), props.Text{Size: 8, Align: align.Center}),
+		)
+
+		contentsRow = append(contentsRow, r)
+	}
+
+	rows = append(rows, contentsRow...)
+
+	return rows
+}
+
+func getPageHeader(travelExpense *db.TravelExpense) core.Row {
+	return row.New(25).Add(
+		col.New(6).Add(
+			text.New(fmt.Sprintf("Fecha de solicitud: %s", FormatTimeToYYYYMMDD(travelExpense.SolicitudeDate)), props.Text{
+				Top: 0,
+			}),
+			text.New(fmt.Sprintf("Dependencia: %s", travelExpense.Dependency), props.Text{
+				Top: 5,
+			}),
+
+			text.New(fmt.Sprintf("Transporte: %s", travelExpense.TransporteType), props.Text{
+				Top: 10,
+			}),
+			text.New(fmt.Sprintf("Hora de Salida: %s", FormatTimeToHHMMAMOrPM(travelExpense.DepartureDate)), props.Text{
+				Top: 15,
+			}),
+		),
+		col.New(6).Add(
+			text.New(fmt.Sprintf("Motivo de salida: %s", FormatTimeToHHMMAMOrPM(travelExpense.ArrivalDate)), props.Text{
+				Top: 0,
+			}),
+			text.New(fmt.Sprintf("Lugar de Partida: %s", travelExpense.Route.StartingPointProvince.Name), props.Text{
+				Top: 5,
+			}),
+
+			text.New(fmt.Sprintf("Lugar de visita: %s", travelExpense.Route.FinalDestinationProvince.Name), props.Text{
+				Top: 10,
+			}),
+			text.New(fmt.Sprintf("Hora de llegada: %s", FormatTimeToHHMMAMOrPM(travelExpense.ArrivalDate)), props.Text{
+				Top: 15,
+			}),
+		),
+	)
 }
 
 func getGrayColor() *props.Color {
@@ -207,53 +271,5 @@ func getGrayColor() *props.Color {
 		Red:   200,
 		Green: 200,
 		Blue:  200,
-	}
-}
-
-func getBlueColor() *props.Color {
-	return &props.Color{
-		Red:   10,
-		Green: 10,
-		Blue:  150,
-	}
-}
-
-func getRedColor() *props.Color {
-	return &props.Color{
-		Red:   150,
-		Green: 10,
-		Blue:  10,
-	}
-}
-
-func getContents() [][]string {
-	return [][]string{
-		{"", "Swamp", "12", "R$ 4,00"},
-		{"", "Sorin, A Planeswalker", "4", "R$ 90,00"},
-		{"", "Tassa", "4", "R$ 30,00"},
-		{"", "Skinrender", "4", "R$ 9,00"},
-		{"", "Island", "12", "R$ 4,00"},
-		{"", "Mountain", "12", "R$ 4,00"},
-		{"", "Plain", "12", "R$ 4,00"},
-		{"", "Black Lotus", "1", "R$ 1.000,00"},
-		{"", "Time Walk", "1", "R$ 1.000,00"},
-		{"", "Emberclave", "4", "R$ 44,00"},
-		{"", "Anax", "4", "R$ 32,00"},
-		{"", "Murderous Rider", "4", "R$ 22,00"},
-		{"", "Gray Merchant of Asphodel", "4", "R$ 2,00"},
-		{"", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"", "Tymarett", "4", "R$ 13,00"},
-		{"", "Doom Blade", "4", "R$ 5,00"},
-		{"", "Dark Lord", "3", "R$ 7,00"},
-		{"", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"", "Poring", "4", "R$ 1,00"},
-		{"", "Deviling", "4", "R$ 99,00"},
-		{"", "Seiya", "4", "R$ 45,00"},
-		{"", "Harry Potter", "4", "R$ 62,00"},
-		{"", "Goku", "4", "R$ 77,00"},
-		{"", "Phreoni", "4", "R$ 22,00"},
-		{"", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"", "Lord Seyren", "4", "R$ 55,00"},
 	}
 }
