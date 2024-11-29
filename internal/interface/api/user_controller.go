@@ -57,12 +57,13 @@ func (uc *UserController) FindAll(w http.ResponseWriter, r *http.Request) {
 
 		if jobPositionHistory != nil {
 			jp = response.JobPosition{
-				ID:            jobPosition.ID.String(),
-				Name:          jobPosition.Name,
-				Lunch:         jobPositionHistory.Lunch,
-				BreakFast:     jobPositionHistory.BreakFast,
-				Dinner:        jobPositionHistory.Dinner,
-				Accommodation: jobPositionHistory.Accommodation,
+				ID:                   jobPosition.ID.String(),
+				Name:                 jobPosition.Name,
+				Lunch:                jobPositionHistory.Lunch,
+				BreakFast:            jobPositionHistory.BreakFast,
+				Dinner:               jobPositionHistory.Dinner,
+				Accommodation:        jobPositionHistory.Accommodation,
+				JobPositionHistoryId: jobPositionHistory.ID.String(),
 			}
 		}
 

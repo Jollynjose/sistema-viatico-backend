@@ -23,7 +23,7 @@ func NewJobPositionController(router *http.ServeMux, service interfaces.JobPosit
 
 	router.HandleFunc("GET /", controller.FindAll)
 	router.HandleFunc("GET /{id}", controller.FindById)
-	router.HandleFunc("POST /", controller.Create)
+	router.HandleFunc("POST /create", controller.Create)
 	return controller
 }
 

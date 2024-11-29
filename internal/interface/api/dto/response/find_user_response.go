@@ -15,12 +15,13 @@ type FindUserResponse struct {
 }
 
 type JobPosition struct {
-	ID            string  `json:"id"`
-	Name          string  `json:"name"`
-	Lunch         float64 `json:"lunch"`
-	BreakFast     float64 `json:"breakfast"`
-	Dinner        float64 `json:"dinner"`
-	Accommodation float64 `json:"accommodation"`
+	ID                   string  `json:"id"`
+	Name                 string  `json:"name"`
+	Lunch                float64 `json:"lunch"`
+	BreakFast            float64 `json:"breakfast"`
+	Dinner               float64 `json:"dinner"`
+	Accommodation        float64 `json:"accommodation"`
+	JobPositionHistoryId string  `json:"job_position_history_id"`
 }
 
 type FindAllUser struct {
